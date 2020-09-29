@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 
 import { Exercise } from './Exercise'
 import { ExerciseConnections } from './ExerciseConnections'
@@ -19,20 +19,14 @@ interface IExerciseGraph {
 export const ExerciseGraph = ({ exerciseLayers }: IExerciseGraph) => {
   console.log({ exerciseLayers })
 
-  const connectionsEl = useRef(null)
-
   return (
     <>
-      <ExerciseConnections ref={connectionsEl} />
+      <ExerciseConnections />
       <div className="exercise__track">
         {exerciseLayers.map((layerData, i) => (
           <div key={`layer-${i}`} className="exercise__layer">
             {layerData.map((exerciseData) => (
-              <Exercise
-                key={exerciseData.slug}
-                data={exerciseData}
-                connectionHandler={connectionsEl}
-              />
+              <Exercise key={exerciseData.slug} data={exerciseData} />
             ))}
           </div>
         ))}
