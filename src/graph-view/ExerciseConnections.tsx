@@ -6,6 +6,8 @@ import React, {
   forwardRef,
 } from 'react'
 
+import './ExerciseConnections.css'
+
 type LineStore = Map<string, Set<string>>
 
 /**
@@ -17,48 +19,44 @@ type LineStore = Map<string, Set<string>>
  * - When the component is drawn/re-drawn:
  *   - Draw the arrows that are represented by the data in the line stores
  */
-export const ExerciseConnections = forwardRef((_props, ref) => {
-  const [inactiveLines, setInactiveLines] = useState(new Map() as LineStore)
-  const [activeLines, setActiveLines] = useState(new Map() as LineStore)
+export const ExerciseConnections = forwardRef((props, ref) => {
+  const [lineStore, setLineStore] = useState(new Map() as LineStore)
 
-  const updateLines = (lines: LineStore, active: boolean) => {
-    if (active) {
-      setActiveLines(lines)
-    } else {
-      setInactiveLines(lines)
-    }
+  const updateLines = (lines: LineStore) => {
+    console.log(lines)
+
+    setLineStore(lines)
   }
 
-  const addLines = (
-    prereqs: Array<string>,
-    exercise: string,
-    isActive: boolean = false
-  ) => {
-    const linesStore = isActive ? activeLines : inactiveLines
-    const nextPrereqs = new Set(linesStore.get(exercise) ?? new Set<string>())
-    prereqs.forEach((prereq) => nextPrereqs.add(prereq))
-    const nextLineStore = new Map(linesStore).set(exercise, nextPrereqs)
+  const addExerciseLines = (exercise: string, prerequisites: string[]) => {
+    const nextPrerequisites = new Set(
+      lineStore.get(exercise) ?? new Set<string>()
+    )
+    prerequisites.forEach((prerequisite) => nextPrerequisites.add(prerequisite))
+    const nextLineStore = new Map(lineStore).set(exercise, nextPrerequisites)
 
-    updateLines(nextLineStore, isActive)
+    updateLines(nextLineStore)
   }
 
-  const removeLines = (exercise: string, isActive: boolean = false) => {
-    const lineStore = isActive ? activeLines : inactiveLines
+  const removeExerciseLines = (exercise: string) => {
     const nextLineStore = new Map(lineStore)
     nextLineStore.delete(exercise)
-    updateLines(nextLineStore, isActive)
+    updateLines(nextLineStore)
   }
 
   useImperativeHandle(ref, () => {
     return {
-      addLines,
-      removeLines,
+      addExerciseLines,
+      removeExerciseLines,
     }
   })
 
   const canvasEl = useRef(null)
 
   useEffect(() => {
+    console.log({ lineStore })
+
+    // eslint-disable-next-line
     const dpi = window.devicePixelRatio
     const canvas = canvasEl.current as HTMLCanvasElement | null
     const ctx = canvas?.getContext('2d')
@@ -80,8 +78,7 @@ export const ExerciseConnections = forwardRef((_props, ref) => {
     // This is a test square to ensure the component was being rendered behind the webpage
     ctx.fillStyle = '#FF0000'
     ctx.fillRect(50, 50, 100, 100)
-    // TODO - replace preceeding
-  }, [activeLines, inactiveLines])
+  }, [lineStore])
 
   return (
     <canvas ref={canvasEl} className="exercise-connections__canvas"></canvas>

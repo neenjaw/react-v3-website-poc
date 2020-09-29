@@ -1,27 +1,3 @@
-html {
-  --background: #FBFCFE;
-  --card-background: #FFFFFF;
-  --green: #65B294;
-  --text-active: #26282d;
-  --text-unlocked: #6D6984;
-  --text-locked: #9895A8;
-}
-
-body {
-  background-color: var(--background);
-}
-
-.exercise-connections__canvas {
-  margin: 0;
-  padding: 0;
-  z-index: -1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  touch-action: none;
-  border: 1px dashed;
-}
-
 .exercise__track {
   display: block;
 }
@@ -33,14 +9,13 @@ body {
   flex-wrap: wrap;
 }
 
-
 .exercise__card {
   box-sizing: border-box;
   width: 200px;
   height: 100px;
 
   padding: 0.2rem;
-  margin: 0.4rem 0.2rem;
+  margin: 0.8rem 0.2rem;
 
   background-color: var(--card-background);
   color: var(--text-locked);
@@ -54,11 +29,11 @@ body {
   justify-content: space-between;
 }
 
-.exercise__display__name {
+.exercise__display-name {
   font-weight: 600;
 }
 
-.exercise__display_stats {
+.exercise__display-stats {
   min-height: 20px;
 }
 

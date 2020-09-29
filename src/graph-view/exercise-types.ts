@@ -1,11 +1,18 @@
+export enum ExerciseState {
+  Locked = 'locked',
+  Unlocked = 'unlocked',
+  Completed = 'completed',
+  InProgress = 'in_progress',
+}
+
 export type ExerciseData = {
   index: number
   slug: string
   uuid: string
-  concepts: Array<string>
-  prerequisites: Array<string>
-  status?: 'locked' | 'unlocked' | 'complete' | 'in-progress'
+  concepts: string[]
+  prerequisites: string[]
+  status?: ExerciseState
 }
 
-export type ExerciseLayerData = Array<ExerciseData>
-export type ExerciseLayersData = Array<ExerciseLayerData>
+export type ExerciseLayerData = ExerciseData[]
+export type ExerciseLayersData = ExerciseLayerData[]

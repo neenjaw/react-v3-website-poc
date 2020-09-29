@@ -5,6 +5,8 @@ import { ExerciseConnections } from './ExerciseConnections'
 
 import { ExerciseLayersData } from './exercise-types'
 
+import './ExerciseGraph.css'
+
 /**
  * TODO:
  * - make use canvas in the exercise component
@@ -29,7 +31,7 @@ export const ExerciseGraph = ({ exerciseLayers }: IExerciseGraph) => {
               <Exercise
                 key={exerciseData.slug}
                 data={exerciseData}
-                canvas={connectionsEl.current}
+                connectionHandler={connectionsEl}
               />
             ))}
           </div>
