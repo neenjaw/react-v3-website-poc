@@ -11,7 +11,7 @@ export type ExerciseData = {
   uuid: string
   concepts: string[]
   prerequisites: string[]
-  status?: ExerciseState
+  status: ExerciseState
 }
 
 export type ExerciseLayerData = ExerciseData[]

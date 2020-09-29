@@ -76,6 +76,7 @@ export const data: ExerciseLayersData = [
         'floating-point-numbers',
         'multiple-clause-functions',
       ],
+      status: ExerciseState.Locked,
     },
   ],
   [
@@ -98,6 +99,7 @@ export const data: ExerciseLayersData = [
         'anonymous-functions',
         'default-arguments',
       ],
+      status: ExerciseState.Locked,
     },
     {
       index: 11,
@@ -110,6 +112,7 @@ export const data: ExerciseLayersData = [
         'multiple-clause-functions',
         'guards',
       ],
+      status: ExerciseState.Locked,
     },
   ],
   [
@@ -176,6 +179,7 @@ export const data: ExerciseLayersData = [
         'nil',
         'anonymous-functions',
       ],
+      status: ExerciseState.Locked,
     },
     {
       index: 18,
@@ -190,6 +194,7 @@ export const data: ExerciseLayersData = [
         'nil',
         'default-arguments',
       ],
+      status: ExerciseState.Locked,
     },
     {
       index: 20,
@@ -203,6 +208,7 @@ export const data: ExerciseLayersData = [
         'if-conditional',
         'default-arguments',
       ],
+      status: ExerciseState.Locked,
     },
   ],
   [
@@ -217,6 +223,7 @@ export const data: ExerciseLayersData = [
         'if-conditional',
         'bitstrings',
       ],
+      status: ExerciseState.Locked,
     },
     {
       index: 17,
