@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { addExerciseLines, removeExerciseLines } from './useExerciseLineStore'
+import { addExercisePaths, removeExercisePaths } from './useExercisePathStore'
 
 import { ExerciseState, ExerciseData } from './exercise-types'
 
@@ -14,9 +14,9 @@ export const Exercise = ({ data }: { data: ExerciseData }) => {
   const status = data.status ?? ExerciseState.Locked
 
   useEffect(() => {
-    addExerciseLines(data.slug, [...data.prerequisites], active)
+    addExercisePaths(data.slug, [...data.prerequisites], active)
     return () => {
-      removeExerciseLines(data.slug)
+      removeExercisePaths(data.slug)
     }
   }, [data.prerequisites, data.slug, active])
 
