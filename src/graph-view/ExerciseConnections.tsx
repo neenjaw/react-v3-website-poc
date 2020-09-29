@@ -1,14 +1,27 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-} from 'react'
+import React, { useEffect, useRef } from 'react'
+
+import { LineStore, useExerciseLineStore } from './useExerciseLineStore'
 
 import './ExerciseConnections.css'
 
-type LineStore = Map<string, Set<string>>
+enum ExercisePathState {
+  Unavailable = 'unavailable',
+  Available = 'available',
+  Completed = 'completed',
+}
+
+type ExercisePath = {
+  start: string
+  end: string
+  state: ExercisePathState
+  active: boolean
+}
+
+type DeterminePathTypesReturn = {
+  unavailablePaths: ExercisePath[]
+  availablePaths: ExercisePath[]
+  completedPaths: ExercisePath[]
+}
 
 /**
  * ExerciseConnections
@@ -19,42 +32,36 @@ type LineStore = Map<string, Set<string>>
  * - When the component is drawn/re-drawn:
  *   - Draw the arrows that are represented by the data in the line stores
  */
-export const ExerciseConnections = forwardRef((props, ref) => {
-  const [lineStore, setLineStore] = useState(new Map() as LineStore)
-
-  const updateLines = (lines: LineStore) => {
-    console.log(lines)
-
-    setLineStore(lines)
-  }
-
-  const addExerciseLines = (exercise: string, prerequisites: string[]) => {
-    const nextPrerequisites = new Set(
-      lineStore.get(exercise) ?? new Set<string>()
-    )
-    prerequisites.forEach((prerequisite) => nextPrerequisites.add(prerequisite))
-    const nextLineStore = new Map(lineStore).set(exercise, nextPrerequisites)
-
-    updateLines(nextLineStore)
-  }
-
-  const removeExerciseLines = (exercise: string) => {
-    const nextLineStore = new Map(lineStore)
-    nextLineStore.delete(exercise)
-    updateLines(nextLineStore)
-  }
-
-  useImperativeHandle(ref, () => {
-    return {
-      addExerciseLines,
-      removeExerciseLines,
-    }
-  })
-
+export const ExerciseConnections = () => {
+  const lineStore = useExerciseLineStore()
   const canvasEl = useRef(null)
 
   useEffect(() => {
-    console.log({ lineStore })
+    console.log(lineStore)
+
+    const {
+      unavailablePaths: inactiveUnavailablePaths,
+      availablePaths: inactiveAvailablePaths,
+      completedPaths: inactiveCompletedPaths,
+    } = determinePathTypes(lineStore.inactive)
+
+    const {
+      unavailablePaths: activeUnavailablePaths,
+      availablePaths: activeAvailablePaths,
+      completedPaths: activeCompletedPaths,
+    } = determinePathTypes(lineStore.active)
+
+    // Determine the order drawn since canvas is drawn in bitmap mode
+    // which means, things drawn first are covered up by things drawn second
+    // if they overlap
+    const drawOrder = [
+      inactiveUnavailablePaths,
+      inactiveCompletedPaths,
+      inactiveAvailablePaths,
+      activeUnavailablePaths,
+      activeCompletedPaths,
+      activeAvailablePaths,
+    ]
 
     // eslint-disable-next-line
     const dpi = window.devicePixelRatio
@@ -67,6 +74,10 @@ export const ExerciseConnections = forwardRef((props, ref) => {
       document.body.scrollHeight -
       Number(canvas.style.borderTopWidth) -
       Number(canvas.style.borderBottomWidth)
+
+    drawOrder.forEach((pathGroup) =>
+      pathGroup.forEach((path) => drawPath(path, ctx))
+    )
 
     canvas.width =
       document.documentElement.clientWidth -
@@ -83,4 +94,18 @@ export const ExerciseConnections = forwardRef((props, ref) => {
   return (
     <canvas ref={canvasEl} className="exercise-connections__canvas"></canvas>
   )
-})
+}
+
+function determinePathTypes(lineStore: LineStore): DeterminePathTypesReturn {
+  // Todo
+
+  return {
+    unavailablePaths: [],
+    availablePaths: [],
+    completedPaths: [],
+  }
+}
+
+function drawPath(path: ExercisePath, ctx: CanvasRenderingContext2D): void {
+  // Todo
+}
