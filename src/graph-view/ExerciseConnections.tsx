@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
-import { PathStore, useExercisePathStore } from './useExercisePathStore'
+import { PathStore, useExercisePathStore } from '../hooks/useExercisePathStore'
+import { useWebpageSize } from '../hooks/useWebpageSize'
 
 import './ExerciseConnections.css'
 
@@ -34,10 +35,12 @@ type DeterminePathTypesReturn = {
  */
 export const ExerciseConnections = () => {
   const pathStore = useExercisePathStore()
+  const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasEl = useRef(null)
 
   useEffect(() => {
-    console.log(pathStore)
+    console.log({ pathStore })
+    console.log({ webpageWidth, webpageHeight })
 
     const {
       unavailablePaths: inactiveUnavailablePaths,
@@ -71,25 +74,25 @@ export const ExerciseConnections = () => {
     if (!canvas || !ctx) return
 
     canvas.height =
-      document.body.scrollHeight -
+      webpageHeight -
       Number(canvas.style.borderTopWidth) -
       Number(canvas.style.borderBottomWidth)
+
+    canvas.width =
+      webpageWidth -
+      Number(canvas.style.borderLeftWidth) -
+      Number(canvas.style.borderRightWidth) -
+      2 // Not sure why it needs two more pixel in chrome
 
     drawOrder.forEach((pathGroup) =>
       pathGroup.forEach((path) => drawPath(path, ctx))
     )
 
-    canvas.width =
-      document.documentElement.clientWidth -
-      Number(canvas.style.borderLeftWidth) -
-      Number(canvas.style.borderRightWidth) -
-      2 // Not sure why it needs two more pixel in chrome
-
     // TODO - replace following with actual path drawing
     // This is a test square to ensure the component was being rendered behind the webpage
     ctx.fillStyle = '#FF0000'
     ctx.fillRect(50, 50, 100, 100)
-  }, [pathStore])
+  }, [pathStore, webpageHeight, webpageWidth])
 
   return (
     <canvas ref={canvasEl} className="exercise-connections__canvas"></canvas>
