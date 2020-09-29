@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react'
-import { addExercisePaths, removeExercisePaths } from './useExercisePathStore'
+import {
+  addExercisePaths,
+  removeExercisePaths,
+} from '../hooks/useExercisePathStore'
 
 import { ExerciseState, ExerciseData } from './exercise-types'
 
