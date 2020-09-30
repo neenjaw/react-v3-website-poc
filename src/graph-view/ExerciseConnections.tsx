@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 
-import { PathStore, useExercisePathStore } from '../hooks/useExercisePathStore'
 import { useWebpageSize } from '../hooks/useWebpageSize'
 import { slugToId } from './Exercise'
+import { ExerciseState, ExerciseConnection } from './exercise-types'
 
-import { ExerciseState } from './exercise-types'
 import './ExerciseConnections.css'
 
 enum ExercisePathState {
@@ -13,14 +12,14 @@ enum ExercisePathState {
   Completed = 'completed',
 }
 
-type PathCoordinate = {
+type ExercisePathCoordinate = {
   x: number
   y: number
 }
 
 type ExercisePath = {
-  start: PathCoordinate
-  end: PathCoordinate
+  start: ExercisePathCoordinate
+  end: ExercisePathCoordinate
   state: ExercisePathState
 }
 
@@ -43,13 +42,15 @@ type DrawPathOptions = {
  * - When the component is drawn/re-drawn:
  *   - Draw the arrows that are represented by the data in the path stores
  */
-export const ExerciseConnections = () => {
-  const pathStore = useExercisePathStore()
+export const ExerciseConnections = ({
+  connections,
+}: {
+  connections: ExerciseConnection[]
+}) => {
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasEl = useRef(null)
 
   useEffect(() => {
-    console.log({ pathStore })
     console.log({ webpageWidth, webpageHeight })
 
     // eslint-disable-next-line
@@ -63,13 +64,13 @@ export const ExerciseConnections = () => {
       unavailable: inactiveUnavailablePaths,
       available: inactiveAvailablePaths,
       completed: inactiveCompletedPaths,
-    } = determinePathTypes(pathStore.inactive)
+    } = determinePathTypes(connections, false)
 
     const {
       unavailable: activeUnavailablePaths,
       available: activeAvailablePaths,
       completed: activeCompletedPaths,
-    } = determinePathTypes(pathStore.active)
+    } = determinePathTypes(connections, true)
 
     // Determine the order drawn since canvas is drawn in bitmap
     // mode which means, things drawn first are covered up by
@@ -108,60 +109,61 @@ export const ExerciseConnections = () => {
     drawOrder.forEach((pathGroup) =>
       pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
     )
-  }, [pathStore, webpageHeight, webpageWidth])
+  }, [connections, webpageHeight, webpageWidth])
 
   return (
     <canvas ref={canvasEl} className="exercise-connections-canvas"></canvas>
   )
 }
 
-function determinePathTypes(pathStore: PathStore): CategorizedExercisePaths {
+function determinePathTypes(
+  connections: ExerciseConnection[],
+  active: boolean
+): CategorizedExercisePaths {
   const paths: CategorizedExercisePaths = {
     unavailable: [],
     available: [],
     completed: [],
   }
 
-  pathStore.forEach((prerequisites, exercise) => {
-    const pathEndElement = document.getElementById(slugToId(exercise))
+  connections.forEach(({ from, to }) => {
+    const pathEndElement = document.getElementById(slugToId(to))
     if (!pathEndElement) return
-    prerequisites.forEach((prerequisite) => {
-      const pathStartElement = document.getElementById(slugToId(prerequisite))
-      if (!pathStartElement) return
+    const pathStartElement = document.getElementById(slugToId(from))
+    if (!pathStartElement) return
 
-      const exerciseStatus = pathEndElement.dataset
-        .exerciseStatus as ExerciseState
-      const exercisePath = {
-        start: getPathStartFromElement(pathStartElement),
-        end: getPathEndFromElement(pathEndElement),
-        state: getPathState(exerciseStatus),
-      }
+    const exerciseStatus = pathEndElement.dataset
+      .exerciseStatus as ExerciseState
+    const exercisePath = {
+      start: getPathStartFromElement(pathStartElement),
+      end: getPathEndFromElement(pathEndElement),
+      state: getPathState(exerciseStatus),
+    }
 
-      switch (exercisePath.state) {
-        case ExercisePathState.Available:
-          paths.available.push(exercisePath)
-          break
-        case ExercisePathState.Completed:
-          paths.completed.push(exercisePath)
-          break
-        default:
-          paths.unavailable.push(exercisePath)
-          break
-      }
-    })
+    switch (exercisePath.state) {
+      case ExercisePathState.Available:
+        paths.available.push(exercisePath)
+        break
+      case ExercisePathState.Completed:
+        paths.completed.push(exercisePath)
+        break
+      default:
+        paths.unavailable.push(exercisePath)
+        break
+    }
   })
 
   return paths
 }
 
-function getPathStartFromElement(el: HTMLElement): PathCoordinate {
+function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
   const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
   const y = Math.ceil(el.offsetTop + el.offsetHeight)
 
   return { x, y }
 }
 
-function getPathEndFromElement(el: HTMLElement): PathCoordinate {
+function getPathEndFromElement(el: HTMLElement): ExercisePathCoordinate {
   const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
   const y = Math.floor(el.offsetTop)
 

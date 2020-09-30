@@ -1,7 +1,16 @@
-import { ExerciseLayersData, ExerciseState } from './exercise-types'
+import {
+  Exercise,
+  ExerciseConnection,
+  ExerciseLayer,
+  ExerciseState,
+} from './exercise-types'
 
-export const data: ExerciseLayersData = [
-  [
+export const data: {
+  exercises: Exercise[]
+  layout: ExerciseLayer[]
+  connections: ExerciseConnection[]
+} = {
+  exercises: [
     {
       index: 0,
       slug: 'basics',
@@ -10,8 +19,6 @@ export const data: ExerciseLayersData = [
       prerequisites: [],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 1,
       slug: 'booleans',
@@ -36,8 +43,6 @@ export const data: ExerciseLayersData = [
       prerequisites: ['basics'],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 3,
       slug: 'conditionals',
@@ -54,8 +59,6 @@ export const data: ExerciseLayersData = [
       prerequisites: ['booleans'],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 5,
       slug: 'multiple-clause-functions',
@@ -64,8 +67,6 @@ export const data: ExerciseLayersData = [
       prerequisites: ['conditionals', 'string-literals'],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 7,
       slug: 'tuples',
@@ -78,8 +79,6 @@ export const data: ExerciseLayersData = [
       ],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 8,
       slug: 'strings',
@@ -114,8 +113,6 @@ export const data: ExerciseLayersData = [
       ],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 9,
       slug: 'nil',
@@ -148,8 +145,6 @@ export const data: ExerciseLayersData = [
       prerequisites: ['strings'],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 13,
       slug: 'access-behaviour',
@@ -210,8 +205,6 @@ export const data: ExerciseLayersData = [
       ],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 14,
       slug: 'binary-matching',
@@ -257,8 +250,6 @@ export const data: ExerciseLayersData = [
       prerequisites: ['enum', 'lists', 'maps', 'keyword-lists', 'tuples'],
       status: ExerciseState.Locked,
     },
-  ],
-  [
     {
       index: 19,
       slug: 'exceptions',
@@ -276,4 +267,67 @@ export const data: ExerciseLayersData = [
       status: ExerciseState.Locked,
     },
   ],
-]
+  layout: [
+    ['basics'],
+    ['booleans', 'numbers', 'anonymous-functions'],
+    ['conditionals', 'lists'],
+    ['multiple-clause-functions', 'tuples'],
+    ['strings', 'maps', 'recursion'],
+    ['nil', 'charlists', 'processes', 'regular-expressions'],
+    ['access-behaviour', 'bitstrings', 'structs', 'keyword-lists'],
+    ['binary-matching', 'errors', 'streams', 'agent', 'list-comprehensions'],
+    ['exceptions', 'try-rescue-else-after'],
+  ],
+  connections: [
+    {
+      from: 'basics',
+      to: 'booleans',
+    },
+    {
+      from: 'basics',
+      to: 'numbers',
+    },
+    {
+      from: 'basics',
+      to: 'anonymous-functions',
+    },
+    {
+      from: 'booleans',
+      to: 'conditionals',
+    },
+
+    {
+      from: 'booleans',
+      to: 'lists',
+    },
+    {
+      from: 'booleans',
+      to: 'nil',
+    },
+    {
+      from: 'conditionals',
+      to: 'multiple-clause-functions',
+    },
+    {
+      from: 'lists',
+      to: 'recursion',
+    },
+    {
+      from: 'lists',
+      to: 'keyword-lists',
+    },
+    {
+      from: 'lists',
+      to: 'list-comprehensions',
+    },
+
+    {
+      from: 'lists',
+      to: 'strings',
+    },
+    {
+      from: 'lists',
+      to: 'enum',
+    },
+  ],
+}

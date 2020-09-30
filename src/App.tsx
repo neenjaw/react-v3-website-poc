@@ -7,7 +7,11 @@ import { ExerciseGraph } from './graph-view/ExerciseGraph'
 function App() {
   return (
     <div className="App">
-      <ExerciseGraph exerciseLayers={data} />
+      <ExerciseGraph
+        exercises={data.exercises}
+        layout={data.layout}
+        connections={data.connections}
+      />
     </div>
   )
 }
