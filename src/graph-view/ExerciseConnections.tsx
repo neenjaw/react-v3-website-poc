@@ -37,7 +37,7 @@ type DrawPathOptions = {
 /**
  * ExerciseConnections
  * This react component manages an HTML5 canvas to draw connections between exercises
- * Exercises can self-register/unregister using the imperative handles provided by forwardRef
+ * Exercises can self-register/unregister
  *
  * TODO:
  * - When the component is drawn/re-drawn:
@@ -108,11 +108,6 @@ export const ExerciseConnections = () => {
     drawOrder.forEach((pathGroup) =>
       pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
     )
-
-    // TODO - replace following with actual path drawing
-    // This is a test square to ensure the component was being rendered behind the webpage
-    // ctx.fillStyle = '#FF0000'
-    // ctx.fillRect(50, 50, 100, 100)
   }, [pathStore, webpageHeight, webpageWidth])
 
   return (
@@ -160,17 +155,15 @@ function determinePathTypes(pathStore: PathStore): CategorizedExercisePaths {
 }
 
 function getPathStartFromElement(el: HTMLElement): PathCoordinate {
-  const rect = el.getBoundingClientRect()
-  const x = toNearestHalf(rect.left + rect.width / 2)
-  const y = Math.ceil(rect.top + rect.height)
+  const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
+  const y = Math.ceil(el.offsetTop + el.offsetHeight)
 
   return { x, y }
 }
 
 function getPathEndFromElement(el: HTMLElement): PathCoordinate {
-  const rect = el.getBoundingClientRect()
-  const x = toNearestHalf(rect.left + rect.width / 2)
-  const y = Math.floor(rect.top)
+  const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
+  const y = Math.floor(el.offsetTop)
 
   return { x, y }
 }
@@ -203,5 +196,8 @@ function drawPath(
   ctx: CanvasRenderingContext2D,
   options: DrawPathOptions
 ): void {
-  // Todo
+  ctx.beginPath()
+  ctx.moveTo(path.start.x, path.start.y)
+  ctx.lineTo(path.end.x, path.end.y)
+  ctx.stroke()
 }
