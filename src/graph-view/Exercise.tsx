@@ -1,43 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import {
-  addExercisePaths,
-  removeExercisePaths,
-} from '../hooks/useExercisePathStore'
+import React, { useState } from 'react'
 
-import { ExerciseState, ExerciseData } from './exercise-types'
+import { Exercise as IExercise } from './exercise-types'
 
 import './Exercise.css'
 
-// TODO - on hover, should change state from active to inactive
-// TODO - for different states (locked, unlocked, complete, etc) should change the appearance
-
-export const Exercise = ({ data }: { data: ExerciseData }) => {
-  const exerciseName = deslugify(data.slug)
+export const Exercise = ({
+  index,
+  slug,
+  concepts,
+  prerequisites,
+  status,
+}: IExercise) => {
+  const name = deslugify(slug)
   const [isActive, setActive] = useState(false)
-  const status = data.status ?? ExerciseState.Locked
-
-  useEffect(() => {
-    addExercisePaths(data.slug, [...data.prerequisites], isActive)
-    return () => {
-      removeExercisePaths(data.slug)
-    }
-  }, [data.prerequisites, data.slug, isActive])
 
   let classes = 'exercise-card'
-  classes += ` exercise-card-${data.status}`
+  classes += ` exercise-card-${status}`
   classes += isActive ? ' exercise-card-active' : ''
 
   return (
     <div
-      id={slugToId(data.slug)}
+      id={slugToId(slug)}
       className={classes}
-      data-exercise-slug={data.slug}
+      data-exercise-slug={slug}
       data-exercise-status={status}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
       <div className="exercise-display">
-        <div className="exercise-display-name">{exerciseName}</div>
+        <div className="exercise-display-name">{name}</div>
         <div className="exercise-display-stats"></div>
       </div>
       {/* render another component here for the status */}

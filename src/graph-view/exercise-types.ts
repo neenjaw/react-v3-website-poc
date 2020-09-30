@@ -5,7 +5,7 @@ export enum ExerciseState {
   InProgress = 'in_progress',
 }
 
-export type ExerciseData = {
+export type Exercise = {
   index: number
   slug: string
   uuid: string
@@ -14,5 +14,15 @@ export type ExerciseData = {
   status: ExerciseState
 }
 
-export type ExerciseLayerData = ExerciseData[]
-export type ExerciseLayersData = ExerciseLayerData[]
+export type ExerciseLayer = string[]
+
+export type ExerciseConnection = {
+  from: string
+  to: string
+}
+
+export interface ExerciseGraph {
+  exercises: Exercise[]
+  layout: ExerciseLayer[]
+  connections: ExerciseConnection[]
+}
