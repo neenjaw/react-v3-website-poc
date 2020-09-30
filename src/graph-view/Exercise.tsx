@@ -29,6 +29,7 @@ export const Exercise = ({ data }: { data: ExerciseData }) => {
 
   return (
     <div
+      id={slugToId(data.slug)}
       className={classes}
       data-exercise-slug={data.slug}
       data-exercise-status={status}
@@ -49,4 +50,8 @@ function deslugify(slug: string): string {
     .split('-')
     .map((part) => part[0].toUpperCase() + part.substr(1))
     .join(' ')
+}
+
+export function slugToId(slug: string): string {
+  return `concept-exercise-${slug}`
 }
