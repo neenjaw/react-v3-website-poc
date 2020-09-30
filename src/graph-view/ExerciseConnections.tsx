@@ -95,7 +95,7 @@ export const ExerciseConnections = () => {
   }, [pathStore, webpageHeight, webpageWidth])
 
   return (
-    <canvas ref={canvasEl} className="exercise-connections__canvas"></canvas>
+    <canvas ref={canvasEl} className="exercise-connections-canvas"></canvas>
   )
 }
 
