@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from 'react'
 
 import { PathStore, useExercisePathStore } from '../hooks/useExercisePathStore'
 import { useWebpageSize } from '../hooks/useWebpageSize'
+import { slugToId } from './Exercise'
 
+import { ExerciseState } from './exercise-types'
 import './ExerciseConnections.css'
 
 enum ExercisePathState {
@@ -11,17 +13,25 @@ enum ExercisePathState {
   Completed = 'completed',
 }
 
-type ExercisePath = {
-  start: string
-  end: string
-  state: ExercisePathState
-  active: boolean
+type PathCoordinate = {
+  x: number
+  y: number
 }
 
-type DeterminePathTypesReturn = {
-  unavailablePaths: ExercisePath[]
-  availablePaths: ExercisePath[]
-  completedPaths: ExercisePath[]
+type ExercisePath = {
+  start: PathCoordinate
+  end: PathCoordinate
+  state: ExercisePathState
+}
+
+type CategorizedExercisePaths = {
+  unavailable: ExercisePath[]
+  available: ExercisePath[]
+  completed: ExercisePath[]
+}
+
+type DrawPathOptions = {
+  existsActivePaths?: boolean
 }
 
 /**
@@ -42,21 +52,28 @@ export const ExerciseConnections = () => {
     console.log({ pathStore })
     console.log({ webpageWidth, webpageHeight })
 
+    // eslint-disable-next-line
+    const dpi = window.devicePixelRatio
+    const canvas = canvasEl.current as HTMLCanvasElement | null
+    const ctx = canvas?.getContext('2d')
+
+    if (!canvas || !ctx) return
+
     const {
-      unavailablePaths: inactiveUnavailablePaths,
-      availablePaths: inactiveAvailablePaths,
-      completedPaths: inactiveCompletedPaths,
+      unavailable: inactiveUnavailablePaths,
+      available: inactiveAvailablePaths,
+      completed: inactiveCompletedPaths,
     } = determinePathTypes(pathStore.inactive)
 
     const {
-      unavailablePaths: activeUnavailablePaths,
-      availablePaths: activeAvailablePaths,
-      completedPaths: activeCompletedPaths,
+      unavailable: activeUnavailablePaths,
+      available: activeAvailablePaths,
+      completed: activeCompletedPaths,
     } = determinePathTypes(pathStore.active)
 
-    // Determine the order drawn since canvas is drawn in bitmap mode
-    // which means, things drawn first are covered up by things drawn second
-    // if they overlap
+    // Determine the order drawn since canvas is drawn in bitmap
+    // mode which means, things drawn first are covered up by
+    // things drawn second if they overlap
     const drawOrder = [
       inactiveUnavailablePaths,
       inactiveCompletedPaths,
@@ -66,11 +83,6 @@ export const ExerciseConnections = () => {
       activeAvailablePaths,
     ]
 
-    // eslint-disable-next-line
-    const dpi = window.devicePixelRatio
-    const canvas = canvasEl.current as HTMLCanvasElement | null
-    const ctx = canvas?.getContext('2d')
-
     if (!canvas || !ctx) return
 
     canvas.height =
@@ -78,20 +90,29 @@ export const ExerciseConnections = () => {
       Number(canvas.style.borderTopWidth) -
       Number(canvas.style.borderBottomWidth)
 
+    // Not sure why it needs two more pixel in chrome to account
+    // for the width of the vertical scroll bar
     canvas.width =
       webpageWidth -
       Number(canvas.style.borderLeftWidth) -
       Number(canvas.style.borderRightWidth) -
-      2 // Not sure why it needs two more pixel in chrome
+      2 // See above
+
+    const drawOptions = defaultDrawPathOptions()
+    drawOptions.existsActivePaths = Boolean(
+      activeUnavailablePaths.length ||
+        activeAvailablePaths.length ||
+        activeCompletedPaths.length
+    )
 
     drawOrder.forEach((pathGroup) =>
-      pathGroup.forEach((path) => drawPath(path, ctx))
+      pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
     )
 
     // TODO - replace following with actual path drawing
     // This is a test square to ensure the component was being rendered behind the webpage
-    ctx.fillStyle = '#FF0000'
-    ctx.fillRect(50, 50, 100, 100)
+    // ctx.fillStyle = '#FF0000'
+    // ctx.fillRect(50, 50, 100, 100)
   }, [pathStore, webpageHeight, webpageWidth])
 
   return (
@@ -99,16 +120,88 @@ export const ExerciseConnections = () => {
   )
 }
 
-function determinePathTypes(pathStore: PathStore): DeterminePathTypesReturn {
-  // Todo
+function determinePathTypes(pathStore: PathStore): CategorizedExercisePaths {
+  const paths: CategorizedExercisePaths = {
+    unavailable: [],
+    available: [],
+    completed: [],
+  }
 
+  pathStore.forEach((prerequisites, exercise) => {
+    const pathEndElement = document.getElementById(slugToId(exercise))
+    if (!pathEndElement) return
+    prerequisites.forEach((prerequisite) => {
+      const pathStartElement = document.getElementById(slugToId(prerequisite))
+      if (!pathStartElement) return
+
+      const exerciseStatus = pathEndElement.dataset
+        .exerciseStatus as ExerciseState
+      const exercisePath = {
+        start: getPathStartFromElement(pathStartElement),
+        end: getPathEndFromElement(pathEndElement),
+        state: getPathState(exerciseStatus),
+      }
+
+      switch (exercisePath.state) {
+        case ExercisePathState.Available:
+          paths.available.push(exercisePath)
+          break
+        case ExercisePathState.Completed:
+          paths.completed.push(exercisePath)
+          break
+        default:
+          paths.unavailable.push(exercisePath)
+          break
+      }
+    })
+  })
+
+  return paths
+}
+
+function getPathStartFromElement(el: HTMLElement): PathCoordinate {
+  const rect = el.getBoundingClientRect()
+  const x = toNearestHalf(rect.left + rect.width / 2)
+  const y = Math.ceil(rect.top + rect.height)
+
+  return { x, y }
+}
+
+function getPathEndFromElement(el: HTMLElement): PathCoordinate {
+  const rect = el.getBoundingClientRect()
+  const x = toNearestHalf(rect.left + rect.width / 2)
+  const y = Math.floor(rect.top)
+
+  return { x, y }
+}
+
+function toNearestHalf(n: number): number {
+  return Math.ceil(n * 2) / 2
+}
+
+function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
+  if (
+    exerciseStatus === ExerciseState.Unlocked ||
+    exerciseStatus === ExerciseState.InProgress
+  ) {
+    return ExercisePathState.Available
+  } else if (exerciseStatus === ExerciseState.Completed) {
+    return ExercisePathState.Completed
+  }
+
+  return ExercisePathState.Unavailable
+}
+
+function defaultDrawPathOptions(): DrawPathOptions {
   return {
-    unavailablePaths: [],
-    availablePaths: [],
-    completedPaths: [],
+    existsActivePaths: false,
   }
 }
 
-function drawPath(path: ExercisePath, ctx: CanvasRenderingContext2D): void {
+function drawPath(
+  path: ExercisePath,
+  ctx: CanvasRenderingContext2D,
+  options: DrawPathOptions
+): void {
   // Todo
 }
