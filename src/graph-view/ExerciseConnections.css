@@ -6,5 +6,6 @@
   top: 0;
   left: 0;
   touch-action: none;
-  border: 1px dashed;
+  border: 0;
+  /* border: 1px dashed; */
 }
