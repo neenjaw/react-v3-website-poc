@@ -36,11 +36,6 @@ type DrawPathOptions = {
 /**
  * ExerciseConnections
  * This react component manages an HTML5 canvas to draw connections between exercises
- * Exercises can self-register/unregister
- *
- * TODO:
- * - When the component is drawn/re-drawn:
- *   - Draw the arrows that are represented by the data in the path stores
  */
 export const ExerciseConnections = ({
   connections,
@@ -56,7 +51,7 @@ export const ExerciseConnections = ({
     console.log({ webpageWidth, webpageHeight })
 
     // eslint-disable-next-line
-    const dpi = window.devicePixelRatio
+    // const dpi = window.devicePixelRatio
     const canvas = canvasEl.current as HTMLCanvasElement | null
     const ctx = canvas?.getContext('2d')
 
@@ -156,6 +151,7 @@ function determinePathTypes(
       return
     }
 
+    // If the start or end exercise doesn't exist for some reason, skip
     const pathEndElement = document.getElementById(slugToId(to))
     if (!pathEndElement) {
       return
@@ -189,6 +185,15 @@ function determinePathTypes(
   return paths
 }
 
+// calculate the start position of the path
+//
+// TODO: When this component becomes a sub-component, need to calculate the relative offset
+// as the current is the position from the client window, where it will need to be the current
+// relative to the canvas
+//
+// Do something like:
+//   x = Math.floor(el.offsetLeft + el.offsetWidth / 2 - <CANVAS_ELEMENT>.offsetLeft) + 0.5
+//   y = Math.ceil(el.offsetTop + el.offsetHeight - <CANVAS_ELEMENT>.offsetTop)
 function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
   const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.ceil(el.offsetTop + el.offsetHeight)
@@ -196,6 +201,15 @@ function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
   return { x, y }
 }
 
+// calculate the end position of the path
+//
+// TODO: When this component becomes a sub-component, need to calculate the relative offset
+// as the current is the position from the client window, where it will need to be the current
+// relative to the canvas
+//
+// Do something like:
+//   x = Math.floor(el.offsetLeft + el.offsetWidth / 2 - <CANVAS_ELEMENT>.offsetLeft) + 0.5
+//   y = Math.floor(el.offsetTop - <CANVAS_ELEMENT>.offsetTop)
 function getPathEndFromElement(el: HTMLElement): ExercisePathCoordinate {
   const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.floor(el.offsetTop)
@@ -203,6 +217,7 @@ function getPathEndFromElement(el: HTMLElement): ExercisePathCoordinate {
   return { x, y }
 }
 
+// Derive the path state from the exercise state
 function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
   if (
     exerciseStatus === ExerciseState.Unlocked ||
@@ -216,6 +231,7 @@ function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
   return ExercisePathState.Unavailable
 }
 
+// Factory function for DrawPathOptions
 function defaultDrawPathOptions(): DrawPathOptions {
   return {
     dim: false,
@@ -274,6 +290,7 @@ function applyLineStyle(
   pathState: ExercisePathState,
   options: DrawPathOptions
 ): void {
+  // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
   const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
   const dashedLine = [5, 7]
@@ -307,6 +324,7 @@ function defineCircle(
   pathState: ExercisePathState,
   options: DrawPathOptions
 ): void {
+  // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
   const radius = Number(rootStyle.getPropertyValue('--circle-radius'))
 
@@ -318,6 +336,7 @@ function applyCircleStyle(
   pathState: ExercisePathState,
   options: DrawPathOptions
 ): void {
+  // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
   const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
   const fillColor = rootStyle.getPropertyValue('--background')
