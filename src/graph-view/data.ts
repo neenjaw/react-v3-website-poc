@@ -271,10 +271,11 @@ export const data: {
     ['basics'],
     ['booleans', 'numbers', 'anonymous-functions'],
     ['conditionals', 'lists'],
-    ['multiple-clause-functions', 'tuples'],
+    ['multiple-clause-functions'],
+    ['tuples'],
     ['strings', 'maps', 'recursion'],
     ['nil', 'charlists', 'processes', 'regular-expressions'],
-    ['access-behaviour', 'bitstrings', 'structs', 'keyword-lists'],
+    ['access-behaviour', 'bitstrings', 'enum', 'structs', 'keyword-lists'],
     ['binary-matching', 'errors', 'streams', 'agent', 'list-comprehensions'],
     ['exceptions', 'try-rescue-else-after'],
   ],
@@ -295,14 +296,9 @@ export const data: {
       from: 'booleans',
       to: 'conditionals',
     },
-
     {
       from: 'booleans',
       to: 'lists',
-    },
-    {
-      from: 'booleans',
-      to: 'nil',
     },
     {
       from: 'conditionals',
@@ -310,24 +306,91 @@ export const data: {
     },
     {
       from: 'lists',
-      to: 'recursion',
+      to: 'multiple-clause-functions',
     },
     {
-      from: 'lists',
-      to: 'keyword-lists',
+      from: 'multiple-clause-functions',
+      to: 'tuples',
     },
     {
-      from: 'lists',
-      to: 'list-comprehensions',
-    },
-
-    {
-      from: 'lists',
+      from: 'tuples',
       to: 'strings',
     },
     {
-      from: 'lists',
+      from: 'tuples',
+      to: 'recursion',
+    },
+    {
+      from: 'tuples',
+      to: 'maps',
+    },
+    {
+      from: 'strings',
+      to: 'nil',
+    },
+    {
+      from: 'strings',
+      to: 'regular-expressions',
+    },
+    {
+      from: 'recursion',
+      to: 'charlists',
+    },
+    {
+      from: 'recursion',
+      to: 'processes',
+    },
+    {
+      from: 'nil',
+      to: 'access-behaviour',
+    },
+    {
+      from: 'charlists',
+      to: 'bitstrings',
+    },
+    {
+      from: 'nil',
       to: 'enum',
+    },
+    {
+      from: 'nil',
+      to: 'structs',
+    },
+    {
+      from: 'nil',
+      to: 'keyword-lists',
+    },
+    {
+      from: 'bitstrings',
+      to: 'binary-matching',
+    },
+    {
+      from: 'structs',
+      to: 'errors',
+    },
+    {
+      from: 'enum',
+      to: 'streams',
+    },
+    {
+      from: 'structs',
+      to: 'agent',
+    },
+    {
+      from: 'enum',
+      to: 'list-comprehensions',
+    },
+    {
+      from: 'keyword-lists',
+      to: 'list-comprehensions',
+    },
+    {
+      from: 'errors',
+      to: 'exceptions',
+    },
+    {
+      from: 'errors',
+      to: 'try-rescue-else-after',
     },
   ],
 }
