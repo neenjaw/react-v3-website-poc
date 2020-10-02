@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { ExerciseCompleteIcon } from './ExerciseCompleteIcon'
 
 import { Exercise as IExercise } from './exercise-types'
 
@@ -29,9 +30,8 @@ export const Exercise = ({
     >
       <div className="exercise-display">
         <div className="exercise-display-name">{name}</div>
-        <div className="exercise-display-stats"></div>
+        <ExerciseCompleteIcon show={false} />
       </div>
-      {/* render another component here for the status */}
     </div>
   )
 }

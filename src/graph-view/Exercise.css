@@ -21,15 +21,15 @@
 
 .exercise-card {
   box-sizing: border-box;
-  width: 200px;
-  height: 100px;
 
-  padding: 0.2rem;
-  margin: 0.8rem 0.2rem;
+  padding: 20px 20px 20px 20px;
+  margin: 25px 10px;
+
+  border-radius: 10px;
 
   background-color: var(--card-background);
   color: var(--text-locked);
-  box-shadow: 0px 0px 60px -15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 25px -5px rgba(0, 0, 0, 0.25);
 
   pointer-events: auto;
 }
@@ -42,6 +42,7 @@
 }
 
 .exercise-display-name {
+  font-size: 1.2rem;
   font-weight: 600;
 }
 
