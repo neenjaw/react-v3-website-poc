@@ -17,7 +17,7 @@ export const data: {
       uuid: 'c29c6092-9d44-4f21-8138-b873384fd90b',
       concepts: ['basics'],
       prerequisites: [],
-      status: ExerciseState.Locked,
+      status: ExerciseState.Completed,
     },
     {
       index: 1,
@@ -25,7 +25,7 @@ export const data: {
       uuid: '5e743355-1ef3-4b5d-b59d-03bbc9697e6c',
       concepts: ['booleans'],
       prerequisites: ['basics'],
-      status: ExerciseState.Locked,
+      status: ExerciseState.Unlocked,
     },
     {
       index: 2,
@@ -33,7 +33,7 @@ export const data: {
       uuid: 'fee79e03-1496-476f-964f-e60632cb13dc',
       concepts: ['integers', 'floating-point-numbers'],
       prerequisites: ['basics'],
-      status: ExerciseState.Locked,
+      status: ExerciseState.Completed,
     },
     {
       index: 6,
@@ -41,7 +41,7 @@ export const data: {
       uuid: '1e3ceb20-715c-4157-9192-13284217affc',
       concepts: ['anonymous-functions', 'closures', 'bit-manipulation'],
       prerequisites: ['basics'],
-      status: ExerciseState.Locked,
+      status: ExerciseState.Unlocked,
     },
     {
       index: 3,
