@@ -1,17 +1,3 @@
-.exercise-track {
-  display: block;
-
-  pointer-events: none;
-}
-
-.exercise-track:hover .exercise-card {
-  opacity: 0.5;
-}
-
-.exercise-track:hover .exercise-card:hover {
-  opacity: 1;
-}
-
 .exercise-layer {
   display: flex;
   flex-direction: row;
@@ -36,8 +22,8 @@
 
 .exercise-display {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
 }
 
