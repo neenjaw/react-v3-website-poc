@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ExerciseCompleteIcon } from './ExerciseCompleteIcon'
 
-import { Exercise as IExercise } from './exercise-types'
+import { Exercise as IExercise, ExerciseState } from './exercise-types'
 
 import './Exercise.css'
 
@@ -11,28 +11,30 @@ export const Exercise = ({
   concepts,
   prerequisites,
   status,
-}: IExercise) => {
+  isActive,
+  handleEnter,
+  handleLeave,
+}: IExercise & { isActive: boolean }) => {
   const name = deslugify(slug)
-  const [isActive, setActive] = useState(false)
 
   let classes = 'exercise-card'
   classes += ` exercise-card-${status}`
   classes += isActive ? ' exercise-card-active' : ''
 
   return (
-    <div
+    <section
       id={slugToId(slug)}
       className={classes}
       data-exercise-slug={slug}
       data-exercise-status={status}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
       <div className="exercise-display">
         <div className="exercise-display-name">{name}</div>
-        <ExerciseCompleteIcon show={false} />
+        <ExerciseCompleteIcon show={ExerciseState.Completed === status} />
       </div>
-    </div>
+    </section>
   )
 }
 
