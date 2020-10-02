@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Exercise } from './Exercise'
 import { ExerciseConnections } from './ExerciseConnections'
@@ -18,6 +18,8 @@ export const ExerciseGraph = ({
 }: ExerciseGraphInterface) => {
   console.log({ exercises, layout, connections })
 
+  const [active, setActive] = useState<string | null>(null)
+
   const exercisesBySlug = exercises.reduce((memo, exercise) => {
     memo.set(exercise.slug, exercise)
     return memo
@@ -25,14 +27,14 @@ export const ExerciseGraph = ({
 
   return (
     <>
-      <ExerciseConnections connections={connections} />
+      <ExerciseConnections connections={connections} activeExercise={active} />
       <div className="exercise-track">
         {layout.map((layer: ExerciseLayer, i: number) => (
           <div key={`layer-${i}`} className="exercise-layer">
             {layer.map((exerciseSlug) => {
               const exercise = exercisesBySlug.get(exerciseSlug)
 
-              // TODO: fix this error
+              // TODO: fix this error typescript error since it _may_ return undefined
               if (!exercise) return 'no exercise'
 
               return (
@@ -44,6 +46,9 @@ export const ExerciseGraph = ({
                   concepts={exercise.concepts}
                   prerequisites={exercise.prerequisites}
                   status={exercise.status}
+                  isActive={active === exercise.slug}
+                  handleEnter={() => setActive(exercise.slug)}
+                  handleLeave={() => setActive(null)}
                 />
               )
             })}
