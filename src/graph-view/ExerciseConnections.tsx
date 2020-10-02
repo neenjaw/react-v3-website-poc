@@ -157,21 +157,17 @@ function determinePathTypes(
 }
 
 function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
-  const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
+  const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.ceil(el.offsetTop + el.offsetHeight)
 
   return { x, y }
 }
 
 function getPathEndFromElement(el: HTMLElement): ExercisePathCoordinate {
-  const x = toNearestHalf(el.offsetLeft + el.offsetWidth / 2)
+  const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.floor(el.offsetTop)
 
   return { x, y }
-}
-
-function toNearestHalf(n: number): number {
-  return Math.ceil(n * 2) / 2
 }
 
 function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
@@ -198,8 +194,23 @@ function drawPath(
   ctx: CanvasRenderingContext2D,
   options: DrawPathOptions
 ): void {
+  const { start, end } = path
+
+  const pageWidth = document.documentElement.clientWidth
+  const normalize =
+    ((end.y - start.y) * Math.abs(start.x - end.x)) / (pageWidth / 2)
+  const adjust = 6
+
   ctx.beginPath()
-  ctx.moveTo(path.start.x, path.start.y)
-  ctx.lineTo(path.end.x, path.end.y)
+  ctx.lineWidth = 2
+  ctx.moveTo(start.x, start.y)
+  ctx.bezierCurveTo(
+    start.x,
+    start.y + normalize + adjust,
+    end.x,
+    end.y - normalize - adjust,
+    end.x,
+    end.y
+  )
   ctx.stroke()
 }

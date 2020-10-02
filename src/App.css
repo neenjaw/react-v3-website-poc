@@ -1,10 +1,12 @@
 html {
-  --background: #FBFCFE;
+  --background: #FFFFFF;
   --card-background: #FFFFFF;
-  --green: #65B294;
-  --text-active: #26282d;
-  --text-unlocked: #6D6984;
-  --text-locked: #9895A8;
+  --check-green: #82E7C1;
+  --line-green: #64B294;
+  --line-available: #7194F7;
+  --line-locked: #C9C8D7;
+  --text-unlocked: #26282d;
+  --text-locked: #83819E;
 
   font-size: 100%;
 }
