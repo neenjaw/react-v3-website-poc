@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ExerciseCompleteIcon } from './ExerciseCompleteIcon'
 
 import { Exercise as IExercise, ExerciseState } from './exercise-types'
