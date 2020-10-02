@@ -30,7 +30,7 @@ type CategorizedExercisePaths = {
 }
 
 type DrawPathOptions = {
-  existsActivePaths?: boolean
+  dim: boolean
 }
 
 /**
@@ -44,8 +44,10 @@ type DrawPathOptions = {
  */
 export const ExerciseConnections = ({
   connections,
+  activeExercise,
 }: {
   connections: ExerciseConnection[]
+  activeExercise: string | null
 }) => {
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasEl = useRef(null)
@@ -64,24 +66,26 @@ export const ExerciseConnections = ({
       unavailable: inactiveUnavailablePaths,
       available: inactiveAvailablePaths,
       completed: inactiveCompletedPaths,
-    } = determinePathTypes(connections, false)
+    } = determinePathTypes(connections, activeExercise, false)
 
     const {
       unavailable: activeUnavailablePaths,
       available: activeAvailablePaths,
       completed: activeCompletedPaths,
-    } = determinePathTypes(connections, true)
+    } = determinePathTypes(connections, activeExercise, true)
 
     // Determine the order drawn since canvas is drawn in bitmap
     // mode which means, things drawn first are covered up by
     // things drawn second if they overlap
-    const drawOrder = [
+    const inactiveDrawOrder = [
       inactiveUnavailablePaths,
-      inactiveCompletedPaths,
       inactiveAvailablePaths,
+      inactiveCompletedPaths,
+    ]
+    const activeDrawOrder = [
       activeUnavailablePaths,
-      activeCompletedPaths,
       activeAvailablePaths,
+      activeCompletedPaths,
     ]
 
     if (!canvas || !ctx) return
@@ -100,16 +104,21 @@ export const ExerciseConnections = ({
       2 // See above
 
     const drawOptions = defaultDrawPathOptions()
-    drawOptions.existsActivePaths = Boolean(
+
+    drawOptions.dim = Boolean(
       activeUnavailablePaths.length ||
         activeAvailablePaths.length ||
         activeCompletedPaths.length
     )
-
-    drawOrder.forEach((pathGroup) =>
+    inactiveDrawOrder.forEach((pathGroup) =>
       pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
     )
-  }, [connections, webpageHeight, webpageWidth])
+
+    drawOptions.dim = false
+    activeDrawOrder.forEach((pathGroup) =>
+      pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
+    )
+  }, [activeExercise, connections, webpageHeight, webpageWidth])
 
   return (
     <canvas ref={canvasEl} className="exercise-connections-canvas"></canvas>
@@ -118,7 +127,8 @@ export const ExerciseConnections = ({
 
 function determinePathTypes(
   connections: ExerciseConnection[],
-  active: boolean
+  activeExercise: string | null = null,
+  matchActive: boolean | null = null
 ): CategorizedExercisePaths {
   const paths: CategorizedExercisePaths = {
     unavailable: [],
@@ -127,10 +137,33 @@ function determinePathTypes(
   }
 
   connections.forEach(({ from, to }) => {
+    // If looking to match only active paths, and if both ends of the path
+    // don't connect to the active Exercise, then skip
+    if (
+      matchActive === true &&
+      to !== activeExercise &&
+      from !== activeExercise
+    ) {
+      return
+    }
+
+    // If looking to match only inactive edges, and if either end of the path
+    // connect to the active Exercise, then skip
+    if (
+      matchActive === false &&
+      (to === activeExercise || from === activeExercise)
+    ) {
+      return
+    }
+
     const pathEndElement = document.getElementById(slugToId(to))
-    if (!pathEndElement) return
+    if (!pathEndElement) {
+      return
+    }
     const pathStartElement = document.getElementById(slugToId(from))
-    if (!pathStartElement) return
+    if (!pathStartElement) {
+      return
+    }
 
     const exerciseStatus = pathEndElement.dataset
       .exerciseStatus as ExerciseState
@@ -185,7 +218,7 @@ function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
 
 function defaultDrawPathOptions(): DrawPathOptions {
   return {
-    existsActivePaths: false,
+    dim: false,
   }
 }
 
@@ -201,8 +234,13 @@ function drawPath(
     ((end.y - start.y) * Math.abs(start.x - end.x)) / (pageWidth / 2)
   const adjust = 6
 
+  if (options.dim) {
+    ctx.globalAlpha = 0.5
+  }
+
+  // Draw Line
   ctx.beginPath()
-  ctx.lineWidth = 2
+  applyLineStyle(ctx, path.state, options)
   ctx.moveTo(start.x, start.y)
   ctx.bezierCurveTo(
     start.x,
@@ -213,4 +251,99 @@ function drawPath(
     end.y
   )
   ctx.stroke()
+
+  // Draw Start Dot
+  ctx.beginPath()
+  defineCircle(ctx, path.start, path.state, options)
+  applyCircleStyle(ctx, path.state, options)
+  ctx.fill()
+  ctx.stroke()
+
+  // Draw End Dot
+  ctx.beginPath()
+  defineCircle(ctx, path.end, path.state, options)
+  applyCircleStyle(ctx, path.state, options)
+  ctx.fill()
+  ctx.stroke()
+
+  ctx.globalAlpha = 1
+}
+
+function applyLineStyle(
+  ctx: CanvasRenderingContext2D,
+  pathState: ExercisePathState,
+  options: DrawPathOptions
+): void {
+  const rootStyle = getComputedStyle(document.documentElement)
+  const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
+  const dashedLine = [5, 7]
+  const solidLine = [1, 0]
+
+  switch (pathState) {
+    case ExercisePathState.Available:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-available')
+      ctx.setLineDash(dashedLine)
+      ctx.lineWidth = lineWidth
+      break
+
+    case ExercisePathState.Completed:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-complete')
+      ctx.setLineDash(solidLine)
+      ctx.lineWidth = lineWidth
+      break
+
+    // ExercisePathState.Locked
+    default:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-locked')
+      ctx.setLineDash(dashedLine)
+      ctx.lineWidth = lineWidth
+      break
+  }
+}
+
+function defineCircle(
+  ctx: CanvasRenderingContext2D,
+  pos: ExercisePathCoordinate,
+  pathState: ExercisePathState,
+  options: DrawPathOptions
+): void {
+  const rootStyle = getComputedStyle(document.documentElement)
+  const radius = Number(rootStyle.getPropertyValue('--circle-radius'))
+
+  ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI)
+}
+
+function applyCircleStyle(
+  ctx: CanvasRenderingContext2D,
+  pathState: ExercisePathState,
+  options: DrawPathOptions
+): void {
+  const rootStyle = getComputedStyle(document.documentElement)
+  const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
+  const fillColor = rootStyle.getPropertyValue('--background')
+  const solidLine = [1, 0]
+
+  switch (pathState) {
+    case ExercisePathState.Available:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-available')
+      ctx.setLineDash(solidLine)
+      ctx.fillStyle = fillColor
+      ctx.lineWidth = lineWidth
+      break
+
+    case ExercisePathState.Completed:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-complete')
+      ctx.setLineDash(solidLine)
+      ctx.fillStyle = fillColor
+      ctx.lineWidth = lineWidth
+      break
+
+    // ExercisePathState.Locked
+    default:
+      ctx.strokeStyle = rootStyle.getPropertyValue('--line-locked')
+      ctx.setLineDash(solidLine)
+      ctx.fillStyle = fillColor
+      ctx.lineWidth = lineWidth
+      break
+  }
 }
