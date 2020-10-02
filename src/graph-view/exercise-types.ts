@@ -1,3 +1,5 @@
+import { MouseEventHandler } from 'react'
+
 export enum ExerciseState {
   Locked = 'locked',
   Unlocked = 'unlocked',
@@ -12,6 +14,8 @@ export type Exercise = {
   concepts: string[]
   prerequisites: string[]
   status: ExerciseState
+  handleEnter?: MouseEventHandler
+  handleLeave?: MouseEventHandler
 }
 
 export type ExerciseLayer = string[]
