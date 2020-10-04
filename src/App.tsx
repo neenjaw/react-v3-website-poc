@@ -1,18 +1,17 @@
 import React from 'react'
+import './styles/tailwind.css'
 import './App.css'
 
-import { data } from './graph-view/data'
-import { ExerciseGraph } from './graph-view/ExerciseGraph'
+import { data } from './graph-data/data'
+import { ConceptGraph } from './concept-exercise-graph/ConceptGraph'
 
 function App() {
   return (
-    <div className="App">
-      <ExerciseGraph
-        exercises={data.exercises}
-        layout={data.layout}
-        connections={data.connections}
-      />
-    </div>
+    <ConceptGraph
+      concepts={data.concepts}
+      layout={data.layout}
+      connections={data.connections}
+    />
   )
 }
 

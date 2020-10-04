@@ -1,32 +1,30 @@
 import React, { useEffect, useRef } from 'react'
 
-import { useWebpageSize } from '../hooks/useWebpageSize'
-import { slugToId } from './Exercise'
-import { ExerciseState, ExerciseConnection } from './exercise-types'
+import { useWebpageSize } from './hooks/useWebpageSize'
+import { conceptSlugToId } from './Concept'
+import { ConceptState, ConceptConnection } from './concept-types'
 
-import './ExerciseConnections.css'
-
-enum ExercisePathState {
+enum ConceptPathState {
   Unavailable = 'unavailable',
   Available = 'available',
   Completed = 'completed',
 }
 
-type ExercisePathCoordinate = {
+type ConceptPathCoordinate = {
   x: number
   y: number
 }
 
-type ExercisePath = {
-  start: ExercisePathCoordinate
-  end: ExercisePathCoordinate
-  state: ExercisePathState
+type ConceptPath = {
+  start: ConceptPathCoordinate
+  end: ConceptPathCoordinate
+  state: ConceptPathState
 }
 
-type CategorizedExercisePaths = {
-  unavailable: ExercisePath[]
-  available: ExercisePath[]
-  completed: ExercisePath[]
+type CategorizedConceptPaths = {
+  unavailable: ConceptPath[]
+  available: ConceptPath[]
+  completed: ConceptPath[]
 }
 
 type DrawPathOptions = {
@@ -34,15 +32,15 @@ type DrawPathOptions = {
 }
 
 /**
- * ExerciseConnections
- * This react component manages an HTML5 canvas to draw connections between exercises
+ * ConceptConnections
+ * This react component manages an HTML5 canvas to draw connections between concepts
  */
-export const ExerciseConnections = ({
+export const ConceptConnections = ({
   connections,
-  activeExercise,
+  activeConcept,
 }: {
-  connections: ExerciseConnection[]
-  activeExercise: string | null
+  connections: ConceptConnection[]
+  activeConcept: string | null
 }) => {
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasEl = useRef(null)
@@ -61,13 +59,13 @@ export const ExerciseConnections = ({
       unavailable: inactiveUnavailablePaths,
       available: inactiveAvailablePaths,
       completed: inactiveCompletedPaths,
-    } = determinePathTypes(connections, activeExercise, false)
+    } = determinePathTypes(connections, activeConcept, false)
 
     const {
       unavailable: activeUnavailablePaths,
       available: activeAvailablePaths,
       completed: activeCompletedPaths,
-    } = determinePathTypes(connections, activeExercise, true)
+    } = determinePathTypes(connections, activeConcept, true)
 
     // Determine the order drawn since canvas is drawn in bitmap
     // mode which means, things drawn first are covered up by
@@ -113,19 +111,17 @@ export const ExerciseConnections = ({
     activeDrawOrder.forEach((pathGroup) =>
       pathGroup.forEach((path) => drawPath(path, ctx, drawOptions))
     )
-  }, [activeExercise, connections, webpageHeight, webpageWidth])
+  }, [activeConcept, connections, webpageHeight, webpageWidth])
 
-  return (
-    <canvas ref={canvasEl} className="exercise-connections-canvas"></canvas>
-  )
+  return <canvas ref={canvasEl} className="canvas"></canvas>
 }
 
 function determinePathTypes(
-  connections: ExerciseConnection[],
-  activeExercise: string | null = null,
+  connections: ConceptConnection[],
+  activeConcept: string | null = null,
   matchActive: boolean | null = null
-): CategorizedExercisePaths {
-  const paths: CategorizedExercisePaths = {
+): CategorizedConceptPaths {
+  const paths: CategorizedConceptPaths = {
     unavailable: [],
     available: [],
     completed: [],
@@ -133,51 +129,50 @@ function determinePathTypes(
 
   connections.forEach(({ from, to }) => {
     // If looking to match only active paths, and if both ends of the path
-    // don't connect to the active Exercise, then skip
+    // don't connect to the active Concept, then skip
     if (
       matchActive === true &&
-      to !== activeExercise &&
-      from !== activeExercise
+      to !== activeConcept &&
+      from !== activeConcept
     ) {
       return
     }
 
     // If looking to match only inactive edges, and if either end of the path
-    // connect to the active Exercise, then skip
+    // connect to the active Concept, then skip
     if (
       matchActive === false &&
-      (to === activeExercise || from === activeExercise)
+      (to === activeConcept || from === activeConcept)
     ) {
       return
     }
 
-    // If the start or end exercise doesn't exist for some reason, skip
-    const pathEndElement = document.getElementById(slugToId(to))
+    // If the start or end concept doesn't exist for some reason, skip
+    const pathEndElement = document.getElementById(conceptSlugToId(to))
     if (!pathEndElement) {
       return
     }
-    const pathStartElement = document.getElementById(slugToId(from))
+    const pathStartElement = document.getElementById(conceptSlugToId(from))
     if (!pathStartElement) {
       return
     }
 
-    const exerciseStatus = pathEndElement.dataset
-      .exerciseStatus as ExerciseState
-    const exercisePath = {
+    const conceptStatus = pathEndElement.dataset.conceptStatus as ConceptState
+    const conceptPath = {
       start: getPathStartFromElement(pathStartElement),
       end: getPathEndFromElement(pathEndElement),
-      state: getPathState(exerciseStatus),
+      state: getPathState(conceptStatus),
     }
 
-    switch (exercisePath.state) {
-      case ExercisePathState.Available:
-        paths.available.push(exercisePath)
+    switch (conceptPath.state) {
+      case ConceptPathState.Available:
+        paths.available.push(conceptPath)
         break
-      case ExercisePathState.Completed:
-        paths.completed.push(exercisePath)
+      case ConceptPathState.Completed:
+        paths.completed.push(conceptPath)
         break
       default:
-        paths.unavailable.push(exercisePath)
+        paths.unavailable.push(conceptPath)
         break
     }
   })
@@ -186,15 +181,8 @@ function determinePathTypes(
 }
 
 // calculate the start position of the path
-//
-// TODO: When this component becomes a sub-component, need to calculate the relative offset
-// as the current is the position from the client window, where it will need to be the current
-// relative to the canvas
-//
-// Do something like:
-//   x = Math.floor(el.offsetLeft + el.offsetWidth / 2 - <CANVAS_ELEMENT>.offsetLeft) + 0.5
-//   y = Math.ceil(el.offsetTop + el.offsetHeight - <CANVAS_ELEMENT>.offsetTop)
-function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
+
+function getPathStartFromElement(el: HTMLElement): ConceptPathCoordinate {
   const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.ceil(el.offsetTop + el.offsetHeight)
 
@@ -202,33 +190,25 @@ function getPathStartFromElement(el: HTMLElement): ExercisePathCoordinate {
 }
 
 // calculate the end position of the path
-//
-// TODO: When this component becomes a sub-component, need to calculate the relative offset
-// as the current is the position from the client window, where it will need to be the current
-// relative to the canvas
-//
-// Do something like:
-//   x = Math.floor(el.offsetLeft + el.offsetWidth / 2 - <CANVAS_ELEMENT>.offsetLeft) + 0.5
-//   y = Math.floor(el.offsetTop - <CANVAS_ELEMENT>.offsetTop)
-function getPathEndFromElement(el: HTMLElement): ExercisePathCoordinate {
+function getPathEndFromElement(el: HTMLElement): ConceptPathCoordinate {
   const x = Math.floor(el.offsetLeft + el.offsetWidth / 2) + 0.5
   const y = Math.floor(el.offsetTop)
 
   return { x, y }
 }
 
-// Derive the path state from the exercise state
-function getPathState(exerciseStatus: ExerciseState): ExercisePathState {
+// Derive the path state from the concept state
+function getPathState(conceptStatus: ConceptState): ConceptPathState {
   if (
-    exerciseStatus === ExerciseState.Unlocked ||
-    exerciseStatus === ExerciseState.InProgress
+    conceptStatus === ConceptState.Unlocked ||
+    conceptStatus === ConceptState.InProgress
   ) {
-    return ExercisePathState.Available
-  } else if (exerciseStatus === ExerciseState.Completed) {
-    return ExercisePathState.Completed
+    return ConceptPathState.Available
+  } else if (conceptStatus === ConceptState.Completed) {
+    return ConceptPathState.Completed
   }
 
-  return ExercisePathState.Unavailable
+  return ConceptPathState.Unavailable
 }
 
 // Factory function for DrawPathOptions
@@ -239,7 +219,7 @@ function defaultDrawPathOptions(): DrawPathOptions {
 }
 
 function drawPath(
-  path: ExercisePath,
+  path: ConceptPath,
   ctx: CanvasRenderingContext2D,
   options: DrawPathOptions
 ): void {
@@ -287,31 +267,39 @@ function drawPath(
 
 function applyLineStyle(
   ctx: CanvasRenderingContext2D,
-  pathState: ExercisePathState,
+  pathState: ConceptPathState,
   options: DrawPathOptions
 ): void {
   // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
-  const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
+  const lineWidth = Number(
+    rootStyle.getPropertyValue('--c-concept-graph-line-width')
+  )
   const dashedLine = [5, 7]
   const solidLine = [1, 0]
 
   switch (pathState) {
-    case ExercisePathState.Available:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-available')
+    case ConceptPathState.Available:
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-available'
+      )
       ctx.setLineDash(dashedLine)
       ctx.lineWidth = lineWidth
       break
 
-    case ExercisePathState.Completed:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-complete')
+    case ConceptPathState.Completed:
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-complete'
+      )
       ctx.setLineDash(solidLine)
       ctx.lineWidth = lineWidth
       break
 
-    // ExercisePathState.Locked
+    // ConceptPathState.Locked
     default:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-locked')
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-locked'
+      )
       ctx.setLineDash(dashedLine)
       ctx.lineWidth = lineWidth
       break
@@ -320,46 +308,56 @@ function applyLineStyle(
 
 function defineCircle(
   ctx: CanvasRenderingContext2D,
-  pos: ExercisePathCoordinate,
-  pathState: ExercisePathState,
+  pos: ConceptPathCoordinate,
+  pathState: ConceptPathState,
   options: DrawPathOptions
 ): void {
   // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
-  const radius = Number(rootStyle.getPropertyValue('--circle-radius'))
+  const radius = Number(
+    rootStyle.getPropertyValue('--c-concept-graph-circle-radius')
+  )
 
   ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI)
 }
 
 function applyCircleStyle(
   ctx: CanvasRenderingContext2D,
-  pathState: ExercisePathState,
+  pathState: ConceptPathState,
   options: DrawPathOptions
 ): void {
   // Use :root defined CSS variable values to style the path
   const rootStyle = getComputedStyle(document.documentElement)
-  const lineWidth = Number(rootStyle.getPropertyValue('--line-width'))
-  const fillColor = rootStyle.getPropertyValue('--background')
+  const lineWidth = Number(
+    rootStyle.getPropertyValue('--c-concept-graph-line-width')
+  )
+  const fillColor = rootStyle.getPropertyValue('--c-concept-graph-background')
   const solidLine = [1, 0]
 
   switch (pathState) {
-    case ExercisePathState.Available:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-available')
+    case ConceptPathState.Available:
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-available'
+      )
       ctx.setLineDash(solidLine)
       ctx.fillStyle = fillColor
       ctx.lineWidth = lineWidth
       break
 
-    case ExercisePathState.Completed:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-complete')
+    case ConceptPathState.Completed:
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-complete'
+      )
       ctx.setLineDash(solidLine)
       ctx.fillStyle = fillColor
       ctx.lineWidth = lineWidth
       break
 
-    // ExercisePathState.Locked
+    // ConceptPathState.Locked
     default:
-      ctx.strokeStyle = rootStyle.getPropertyValue('--line-locked')
+      ctx.strokeStyle = rootStyle.getPropertyValue(
+        '--c-concept-graph-line-locked'
+      )
       ctx.setLineDash(solidLine)
       ctx.fillStyle = fillColor
       ctx.lineWidth = lineWidth

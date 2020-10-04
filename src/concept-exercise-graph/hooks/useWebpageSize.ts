@@ -6,9 +6,6 @@ type WebpageSize = {
 }
 
 export function useWebpageSize() {
-  // Initialize state with undefined width/height so server and client renders match
-  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-
   const [webpageSize, setWebpageSize] = useState({
     width: undefined,
     height: undefined,
