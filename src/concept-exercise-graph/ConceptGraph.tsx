@@ -5,8 +5,6 @@ import { ConceptConnections } from './ConceptConnections'
 
 import { IConcept, IConceptGraph, ConceptLayer } from './concept-types'
 
-import './ConceptGraph.css'
-
 export const ConceptGraph = ({
   concepts,
   layout,

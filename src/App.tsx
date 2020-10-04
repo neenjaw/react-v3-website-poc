@@ -1,5 +1,4 @@
 import React from 'react'
-import './styles/tailwind.css'
 import './App.css'
 
 import { data } from './graph-data/data'

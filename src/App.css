@@ -1,16 +1,3 @@
-:root {
-  --background: #FFFFFF;
-  --card-background: #FFFFFF;
-  --check-green: #82E7C1;
-  --line-complete: #64B294;
-  --line-available: #7194F7;
-  --line-locked: #C9C8D7;
-  --text-unlocked: #26282d;
-  --text-locked: #83819E;
-  --line-width: 2;
-  --circle-radius: 4;
-}
-
 html {
   font-size: 100%;
 }
