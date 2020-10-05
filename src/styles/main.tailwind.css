@@ -1,11 +1,10 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-:root {
+@import '../concept-exercise-graph/ConceptGraph.css';
+
+/* :root {
   --c-concept-graph-background: #ffffff;
   --c-concept-graph-card-background: #ffffff;
   --c-concept-graph-check-green: #82e7c1;
@@ -70,4 +69,4 @@
     touch-action: none;
     border: 1px dashed;
   }
-}
+} */

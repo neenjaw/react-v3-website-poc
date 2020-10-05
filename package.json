@@ -16,12 +16,13 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "npm run watch:css && react-scripts start",
+    "start": "npm-run-all --parallel watch:css start:script",
     "build": "npm run build:css && react-scripts build",
+    "start:script": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:css": "postcss src/styles/main.tailwind.css -o src/styles/main.css",
-    "watch:css": "postcss src/styles/main.tailwind.css -o src/styles/main.css"
+    "watch:css": "postcss src/styles/main.tailwind.css -o src/styles/main.css -w"
   },
   "eslintConfig": {
     "extends": "react-app"
