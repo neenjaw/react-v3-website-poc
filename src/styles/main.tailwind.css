@@ -2,7 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import './ConceptGraph.css';
+@import '../concept-exercise-graph/ConceptGraph.css';
 
 /* :root {
   --c-concept-graph-background: #ffffff;

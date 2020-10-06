@@ -1,9 +1,10 @@
 import {
   IConcept as Concept,
-  ConceptConnection,
-  ConceptLayer,
   ConceptState,
 } from '../concept-exercise-graph/concept-types'
+
+import { ConceptLayer } from '../concept-exercise-graph/concept-graph-types'
+import { ConceptConnection } from '../concept-exercise-graph/concept-connection-types'
 
 export const data: {
   concepts: Concept[]
