@@ -32,29 +32,35 @@ export const ConceptGraph = ({
       <div className="track">
         {layout.map((layer: ConceptLayer, i: number) => (
           <div key={`layer-${i}`} className="layer">
-            {layer.map((conceptSlug) => {
-              const concept = conceptsBySlug.get(conceptSlug)
-              const isDimmed =
-                active !== null &&
-                active !== concept?.slug &&
-                !adjacentConceptsToActive.has(concept?.slug)
+            {layer
+              .map((conceptSlug) => conceptsBySlug.get(conceptSlug))
+              .filter((concept) => concept !== undefined)
+              .map((concept) => {
+                // Typescript complains that concept may be undefined despite filtering them above
+                // so this line is just to cast it as 'IConcept' rather than 'IConcept & undefined'
+                concept = concept as IConcept
 
-              // TODO: fix this error typescript error since it _may_ return undefined
-              return !concept ? null : (
-                <Concept
-                  index={concept.index}
-                  slug={concept.slug}
-                  conceptExercise={concept.conceptExercise}
-                  uuidOfExercise={concept.uuidOfExercise}
-                  status={concept.status}
-                  handleEnter={() => setActive(concept.slug)}
-                  handleLeave={() => setActive(null)}
-                  isActive={active === concept.slug}
-                  isDimmed={isDimmed}
-                  adjacentConcepts={adjacentBySlug.get(concept.slug) ?? []}
-                />
-              )
-            })}
+                const isDimmed =
+                  active !== null &&
+                  active !== concept.slug &&
+                  !adjacentConceptsToActive.has(concept.slug)
+
+                const slug = concept.slug
+                return (
+                  <Concept
+                    key={concept.slug}
+                    index={concept.index}
+                    slug={slug}
+                    web_url={concept.web_url}
+                    status={concept.status}
+                    handleEnter={() => setActive(slug)}
+                    handleLeave={() => setActive(null)}
+                    isActive={active === concept.slug}
+                    isDimmed={isDimmed}
+                    adjacentConcepts={adjacentBySlug.get(concept.slug) ?? []}
+                  />
+                )
+              })}
           </div>
         ))}
       </div>

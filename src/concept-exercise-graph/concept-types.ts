@@ -17,8 +17,7 @@ export interface IExercise {
 export interface IConcept {
   index: number
   slug: string
-  conceptExercise: string
-  uuidOfExercise: string
+  web_url: string
   status: ConceptState
   handleEnter?: MouseEventHandler
   handleLeave?: MouseEventHandler

@@ -4,10 +4,8 @@ import { CompleteIcon } from './CompleteIcon'
 import { IConcept, ConceptState } from './concept-types'
 
 export const Concept = ({
-  index,
   slug,
-  conceptExercise,
-  uuidOfExercise,
+  web_url,
   status,
   handleEnter,
   handleLeave,
@@ -19,31 +17,34 @@ export const Concept = ({
   isDimmed: boolean
   adjacentConcepts: string[]
 }) => {
-  const name = slugToTitlecase(slug)
-
-  let classes = 'card'
-  classes += ` card-${status}`
-  classes += isActive ? ' card-active' : ''
-  classes += isDimmed ? ' dim' : ''
+  // Build the class list
+  let classes = ['card']
+  classes.push(`card-${status}`)
+  if (isActive) {
+    classes.push('card-active')
+  }
+  if (isDimmed) {
+    classes.push('dim')
+  }
   adjacentConcepts.forEach((adjacentConcept: string): void => {
-    classes += ` adjacent-to-${adjacentConcept}`
+    classes.push(`adjacent-to-${adjacentConcept}`)
   })
 
   return (
-    <section
+    <a
+      href={web_url}
       id={conceptSlugToId(slug)}
-      className={classes}
+      className={classes.join(' ')}
       data-concept-slug={slug}
-      data-concept-exercise={conceptExercise}
       data-concept-status={status}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
       <div className="display">
-        <div className="name">{name}</div>
+        <div className="name">{slugToTitlecase(slug)}</div>
         <CompleteIcon show={ConceptState.Completed === status} />
       </div>
-    </section>
+    </a>
   )
 }
 
