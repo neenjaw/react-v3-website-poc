@@ -1,14 +1,14 @@
 import React from 'react'
 import './App.css'
 
-import { data } from './graph-data/data'
-import { ConceptGraph } from './concept-exercise-graph/ConceptGraph'
+import { data2 as data } from './data/index'
+import { ConceptsMap } from './concepts-map/ConceptsMap'
 
 function App() {
   return (
-    <ConceptGraph
+    <ConceptsMap
       concepts={data.concepts}
-      layout={data.layout}
+      levels={data.levels}
       connections={data.connections}
     />
   )

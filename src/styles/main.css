@@ -19518,32 +19518,32 @@ video {
 }
 
 :root {
-  --c-concept-graph-background: #ffffff;
-  --c-concept-graph-card-background: #ffffff;
-  --c-concept-graph-check-green: #82e7c1;
-  --c-concept-graph-line-complete: #64b294;
-  --c-concept-graph-line-available: #7194f7;
-  --c-concept-graph-line-locked: #c9c8d7;
-  --c-concept-graph-text-unlocked: #26282d;
-  --c-concept-graph-text-locked: #83819e;
-  --c-concept-graph-line-width: 2;
-  --c-concept-graph-circle-radius: 4;
-  --c-concept-graph-hover-opacity: 0.3;
+  --c-concepts-map-background: #ffffff;
+  --c-concepts-map-card-background: #ffffff;
+  --c-concepts-map-check-green: #82e7c1;
+  --c-concepts-map-line-complete: #64b294;
+  --c-concepts-map-line-available: #7194f7;
+  --c-concepts-map-line-locked: #c9c8d7;
+  --c-concepts-map-text-unlocked: #26282d;
+  --c-concepts-map-text-locked: #83819e;
+  --c-concepts-map-line-width: 2;
+  --c-concepts-map-circle-radius: 4;
+  --c-concepts-map-hover-opacity: 0.3;
 }
 
-.c-concept-graph .track {
+.c-concepts-map .track {
     pointer-events: none;
     display: block
   }
 
-.c-concept-graph .track .layer {
+.c-concepts-map .track .layer {
       display: flex;
       justify-content: space-evenly;
       flex-wrap: wrap
     }
 
-.c-concept-graph .track .layer .card {
-        border-radius: 0.375rem;
+.c-concepts-map .track .layer .card {
+        border-radius: 8px;
         box-sizing: border-box;
         padding: 20px;
         margin-top: 24px;
@@ -19551,114 +19551,51 @@ video {
         margin-left: 12px;
         margin-right: 12px;
         pointer-events: auto;
-        background-color: var(--c-concept-graph-card-background);
-        color: var(--c-concept-graph-text-locked);
+        background-color: var(--c-concepts-map-card-background);
+        color: var(--c-concepts-map-text-locked);
         box-shadow: 0px 0px 25px -5px rgba(0, 0, 0, 0.25);
         transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1)
       }
 
-.c-concept-graph .track .layer .card.dim {
-          opacity: var(--c-concept-graph-hover-opacity);
+.c-concepts-map .track .layer .card.dim {
+          opacity: var(--c-concepts-map-hover-opacity);
         }
 
-.c-concept-graph .track .layer .card .display {
+.c-concepts-map .track .layer .card.card-completed {
+          --text-opacity: 1;
+          color: #343741;
+          color: rgba(52, 55, 65, var(--text-opacity));
+        }
+
+.c-concepts-map .track .layer .card .display {
           display: flex;
           align-items: center;
           justify-content: space-between
         }
 
-.c-concept-graph .track .layer .card .display .name {
-            font-size: 20px;
-            font-weight: 600;
+.c-concepts-map .track .layer .card .display .name {
+            font-size: 16px;
+            font-weight: 500;
           }
 
-.c-concept-graph .track .layer .card .display .stats {
+.c-concepts-map .track .layer .card .display .stats {
           }
 
-.c-concept-graph .track .layer .card .display .status {
+.c-concepts-map .track .layer .card .display .status {
           }
 
-.c-concept-graph .track .layer .card .display .complete-icon {
+.c-concepts-map .track .layer .card .display .complete-icon {
             margin-left: 8px;
           }
 
-.c-concept-graph .canvas {
+.c-concepts-map .canvas {
     position: absolute;
-    margin: 0;
-    padding: 0;
     z-index: -1;
     top: 0;
     left: 0;
     touch-action: none;
-    border: 1px dashed;
+    /* border: 1px dashed; */
   }
-
-/* :root {
-  --c-concept-graph-background: #ffffff;
-  --c-concept-graph-card-background: #ffffff;
-  --c-concept-graph-check-green: #82e7c1;
-  --c-concept-graph-line-complete: #64b294;
-  --c-concept-graph-line-available: #7194f7;
-  --c-concept-graph-line-locked: #c9c8d7;
-  --c-concept-graph-text-unlocked: #26282d;
-  --c-concept-graph-text-locked: #83819e;
-  --c-concept-graph-line-width: 2;
-  --c-concept-graph-circle-radius: 4;
-}
-
-.c-concept-graph {
-  & .track {
-    @apply pointer-events-none block;
-
-    &:hover {
-      & .card {
-        @apply opacity-50;
-      }
-
-      & .card:hover {
-        @apply opacity-100;
-      }
-    }
-
-    & .layer {
-      @apply flex justify-evenly flex-wrap;
-
-      & .card {
-        @apply rounded-md;
-        @apply box-border p-20 my-24 mx-12 pointer-events-auto;
-
-        background-color: var(--c-concept-graph-card-background);
-        color: var(--c-concept-graph-text-locked);
-        box-shadow: 0px 0px 25px -5px rgba(0, 0, 0, 0.25);
-        transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
-
-        & .display {
-          @apply flex items-center justify-between;
-
-          & .name {
-            @apply text-20 font-semibold;
-          }
-
-          & .stats {
-          }
-
-          & .status {
-          }
-
-          & .complete-icon {
-            @apply ml-8;
-          }
-        }
-      }
-    }
-  }
-
-  & .canvas {
-    @apply absolute m-0 p-0 -z-1 top-0 left-0;
-    touch-action: none;
-    border: 1px dashed;
-  }
-} */
 
 @media (min-width: 640px) {
   .sm\:s-container {

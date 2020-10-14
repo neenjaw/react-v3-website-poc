@@ -4,7 +4,7 @@ export const CompleteIcon = ({ show }: { show: boolean }) => {
   if (!show) return null
 
   const rootStyle = getComputedStyle(document.documentElement)
-  const fillColor = rootStyle.getPropertyValue('--c-concept-graph-check-green')
+  const fillColor = rootStyle.getPropertyValue('--c-concepts-map-check-green')
   const checkColor = '#000000'
   const height = '1.2rem'
   const width = '1.2rem'
@@ -17,6 +17,7 @@ export const CompleteIcon = ({ show }: { show: boolean }) => {
       xmlns="http://www.w3.org/2000/svg"
       className="complete-icon"
     >
+      <title>completed</title>
       <path
         d="m256 0c-141.164062 0-256 114.835938-256 256s114.835938 256 256 256 256-114.835938 256-256-114.835938-256-256-256zm0 0"
         fill={fillColor}

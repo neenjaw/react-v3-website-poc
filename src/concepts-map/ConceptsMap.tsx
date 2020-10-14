@@ -3,31 +3,26 @@ import React, { useState } from 'react'
 import { Concept } from './Concept'
 import { ConceptConnections } from './ConceptConnections'
 
-import { IConceptGraph, ConceptLayer } from './concept-graph-types'
+import { IConceptMap, ConceptLayer } from './concepts-map-types'
 import { ConceptConnection } from './concept-connection-types'
 import { IConcept, isIConcept } from './concept-types'
 
-export const ConceptGraph = ({
-  concepts,
-  layout,
-  connections,
-}: IConceptGraph) => {
+export const ConceptsMap = ({ concepts, levels, connections }: IConceptMap) => {
   const [active, setActive] = useState<string | null>(null)
 
   const conceptsBySlug = indexConceptsBySlug(concepts)
   const adjacentBySlug = indexAdjacentBySlug(connections)
 
   const adjacentConceptsToActive = new Set(
-    Array.from(document.getElementsByClassName(`adjacent-to-${active}`)).map(
-      (element) => (element as HTMLElement).dataset.conceptSlug
-    )
+    Array.from(
+      document.querySelectorAll<HTMLElement>(`.adjacent-to-${active}`)
+    ).map((element) => element.dataset.conceptSlug)
   )
-
   return (
-    <figure className="c-concept-graph">
+    <figure className="c-concepts-map">
       <ConceptConnections connections={connections} activeConcept={active} />
       <div className="track">
-        {layout.map((layer: ConceptLayer, i: number) => (
+        {levels.map((layer: ConceptLayer, i: number) => (
           <div key={`layer-${i}`} className="layer">
             {layer
               .map((conceptSlug) => conceptsBySlug.get(conceptSlug))
@@ -42,8 +37,8 @@ export const ConceptGraph = ({
                 return (
                   <Concept
                     key={concept.slug}
-                    index={concept.index}
                     slug={slug}
+                    name={concept.name}
                     web_url={concept.web_url}
                     status={concept.status}
                     handleEnter={() => setActive(slug)}
