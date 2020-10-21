@@ -46,10 +46,12 @@ const ConnectionPathCanvas = ({
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasRef = useRef(null)
 
+  const key = connectionToKey(connection)
   const pathStartElement = mountedConcepts[connection.from]
   const pathEndElement = mountedConcepts[connection.to]
 
   useEffect(() => {
+    console.log(['effect start', Date.now(), key]) // LOG
     if (!pathStartElement || !pathEndElement) {
       return
     }
@@ -82,6 +84,7 @@ const ConnectionPathCanvas = ({
 
     drawPath(path, ctx, drawOptions)
   }, [
+    key,
     connection.from,
     connection.to,
     mountedConcepts,

@@ -1,5 +1,28 @@
 import { ConceptStatus } from '../concept-map/concept-types'
 
+export const data1 = {
+  graph: {
+    concepts: [
+      {
+        slug: 'basics',
+        name: 'Basics',
+        web_url: 'http://lvh.me:3020/tracks/elixir/concepts/basics',
+      },
+      {
+        slug: 'booleans',
+        name: 'Booleans',
+        web_url: 'http://lvh.me:3020/tracks/elixir/concepts/booleans',
+      },
+    ],
+    levels: [['basics'], ['booleans']],
+    connections: [{ from: 'basics', to: 'booleans' }],
+    status: {
+      basics: ConceptStatus.Unlocked,
+      booleans: ConceptStatus.Locked,
+    },
+  },
+}
+
 export const data = {
   graph: {
     concepts: [

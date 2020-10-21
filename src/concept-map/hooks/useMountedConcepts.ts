@@ -10,6 +10,8 @@ const MOUNTED_CONCEPTS: {
 const listeners: MountedConceptsRecordListener[] = []
 
 export function registerMountedConcept(slug: string, ref: HTMLElement | null) {
+  console.log(['reg mounted', Date.now(), slug]) // LOG
+
   const next = { ...MOUNTED_CONCEPTS.current }
   next[slug] = ref
   MOUNTED_CONCEPTS.current = next

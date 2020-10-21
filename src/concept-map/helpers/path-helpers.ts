@@ -1,39 +1,9 @@
 import {
-  ConceptPath,
-  ConceptConnection,
   ConceptPathCoordinate,
   ConceptPathState,
-  isConceptPath,
 } from '../concept-connection-types'
 
 import { ConceptStatus } from '../concept-types'
-
-import { MountedConceptsRecord } from '../hooks/useMountedConcepts'
-
-type CategorizedConceptPaths = {
-  unavailable: ConceptPath[]
-  available: ConceptPath[]
-  completed: ConceptPath[]
-}
-
-export function mapToPaths(
-  connections: ConceptConnection[],
-  concepts: MountedConceptsRecord
-): ConceptPath[] {
-  return connections
-    .map(({ from, to }) => {
-      const pathStartElement = concepts[from]
-      const pathEndElement = concepts[to]
-
-      // If the start or end concept doesn't exist for some reason, skip
-      if (!pathStartElement || !pathEndElement) {
-        return undefined
-      }
-
-      return determinePath(pathStartElement, pathEndElement)
-    })
-    .filter(isConceptPath)
-}
 
 export function determinePath(
   pathStartElement: HTMLElement,
