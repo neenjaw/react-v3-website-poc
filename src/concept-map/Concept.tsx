@@ -1,38 +1,43 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { CompleteIcon } from './CompleteIcon'
 
-import { IConcept, ConceptState } from './concept-types'
+import { IConcept, ConceptStatus } from './concept-types'
+import {
+  registerMountedConcept,
+  unregisterMountedConcept,
+} from './hooks/useMountedConcepts'
 
 export const Concept = ({
   slug,
   name,
   web_url,
-  status,
   handleEnter,
   handleLeave,
-  isActive,
-  isDimmed,
-  adjacentConcepts,
+  status,
+  isInactive,
 }: IConcept & {
-  isActive: boolean
-  isDimmed: boolean
-  adjacentConcepts: string[]
+  status: ConceptStatus
+  isInactive: boolean
 }) => {
+  const conceptRef = useRef(null)
+
+  useEffect(() => {
+    registerMountedConcept(slug, conceptRef.current)
+    return () => {
+      unregisterMountedConcept(slug)
+    }
+  }, [slug, conceptRef])
+
   // Build the class list
   let classes = ['card']
   classes.push(`card-${status}`)
-  if (isActive) {
-    classes.push('card-active')
+  if (isInactive) {
+    classes.push('card-inactive')
   }
-  if (isDimmed) {
-    classes.push('dim')
-  }
-  adjacentConcepts.forEach((adjacentConcept: string): void => {
-    classes.push(`adjacent-to-${adjacentConcept}`)
-  })
 
   return (
     <a
+      ref={conceptRef}
       href={web_url}
       id={conceptSlugToId(slug)}
       className={classes.join(' ')}
@@ -43,7 +48,7 @@ export const Concept = ({
     >
       <div className="display">
         <div className="name">{name}</div>
-        <CompleteIcon show={ConceptState.Completed === status} />
+        <CompleteIcon show={ConceptStatus.Completed === status} />
       </div>
     </a>
   )

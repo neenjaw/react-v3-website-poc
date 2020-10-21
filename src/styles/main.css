@@ -19518,17 +19518,17 @@ video {
 }
 
 :root {
-  --c-concepts-map-background: #ffffff;
-  --c-concepts-map-card-background: #ffffff;
-  --c-concepts-map-check-green: #82e7c1;
-  --c-concepts-map-line-complete: #64b294;
-  --c-concepts-map-line-available: #7194f7;
-  --c-concepts-map-line-locked: #c9c8d7;
-  --c-concepts-map-text-unlocked: #26282d;
-  --c-concepts-map-text-locked: #83819e;
-  --c-concepts-map-line-width: 2;
-  --c-concepts-map-circle-radius: 4;
-  --c-concepts-map-hover-opacity: 0.3;
+  --c-concept-map-background: #ffffff;
+  --c-concept-map-card-background: #ffffff;
+  --c-concept-map-check-green: #82e7c1;
+  --c-concept-map-line-complete: #64b294;
+  --c-concept-map-line-available: #7194f7;
+  --c-concept-map-line-locked: #c9c8d7;
+  --c-concept-map-text-unlocked: #26282d;
+  --c-concept-map-text-locked: #83819e;
+  --c-concept-map-line-width: 2;
+  --c-concept-map-circle-radius: 4;
+  --c-concept-map-hover-opacity: 0.3;
 }
 
 .c-concepts-map .track {
@@ -19551,14 +19551,14 @@ video {
         margin-left: 12px;
         margin-right: 12px;
         pointer-events: auto;
-        background-color: var(--c-concepts-map-card-background);
-        color: var(--c-concepts-map-text-locked);
+        background-color: var(--c-concept-map-card-background);
+        color: var(--c-concept-map-text-locked);
         box-shadow: 0px 0px 25px -5px rgba(0, 0, 0, 0.25);
         transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1)
       }
 
-.c-concepts-map .track .layer .card.dim {
-          opacity: var(--c-concepts-map-hover-opacity);
+.c-concepts-map .track .layer .card.card-inactive {
+          opacity: var(--c-concept-map-hover-opacity);
         }
 
 .c-concepts-map .track .layer .card.card-completed {
@@ -19593,9 +19593,14 @@ video {
     z-index: -1;
     top: 0;
     left: 0;
-    touch-action: none;
+    transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    touch-action: none
     /* border: 1px dashed; */
   }
+
+.c-concepts-map .canvas.inactive {
+      opacity: var(--c-concept-map-hover-opacity);
+    }
 
 @media (min-width: 640px) {
   .sm\:s-container {

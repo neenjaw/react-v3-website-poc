@@ -2,4 +2,4 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import '../concepts-map/ConceptsMap.css';
+@import '../concept-map/ConceptMap.css';

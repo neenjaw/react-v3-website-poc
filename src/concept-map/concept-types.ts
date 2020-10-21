@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react'
 
-export enum ConceptState {
+export enum ConceptStatus {
   Locked = 'locked',
   Unlocked = 'unlocked',
   Completed = 'completed',
@@ -11,7 +11,6 @@ export interface IConcept {
   slug: string
   web_url: string
   name: string
-  status: ConceptState
   handleEnter?: MouseEventHandler
   handleLeave?: MouseEventHandler
 }
