@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef } from 'react'
 
 import { useWebpageSize } from './hooks/useWebpageSize'
 
@@ -7,8 +7,8 @@ import { ConceptConnection } from './concept-connection-types'
 import { defaultDrawPathOptions, drawPath } from './helpers/draw-helpers'
 import { determinePath } from './helpers/path-helpers'
 import {
-  addListenerForConcept,
-  removeListenerForConcept,
+  addListenerForConcepts,
+  removeListenerForConcepts,
 } from './helpers/concept-element-handler'
 
 /**
@@ -47,25 +47,18 @@ const ConnectionPathCanvas = ({
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasRef = useRef(null)
 
-  const [fromRef, setFromRef] = useState()
-  const [toRef, setToRef] = useState()
-
-  const fromListener = useCallback((nextFromRef) => {
-    setFromRef(nextFromRef)
-  }, [])
-
-  const toListener = useCallback((nextToRef) => {
-    setToRef(nextToRef)
-  }, [])
+  const [[fromRef, toRef], setRefs] = useReducer(
+    (_: any, newRefs: [any, any]) => newRefs,
+    [null, null]
+  )
 
   useEffect(() => {
     const { from, to } = connection
-
-    addListenerForConcept(from, fromListener, to, toListener)
+    addListenerForConcepts(setRefs, from, to)
     return () => {
-      removeListenerForConcept(from, fromListener, to, toListener)
+      removeListenerForConcepts(setRefs, from, to)
     }
-  }, [connection, fromListener, toListener])
+  }, [connection, setRefs])
 
   useEffect(() => {
     const pathStartElement = fromRef
@@ -116,6 +109,12 @@ const ConnectionPathCanvas = ({
   if (!fromRef || !toRef) {
     classNames.push('hidden')
   }
+
+  if (!fromRef || !toRef) {
+    return null
+  }
+
+  console.log(connectionToKey(connection))
 
   return (
     <canvas
