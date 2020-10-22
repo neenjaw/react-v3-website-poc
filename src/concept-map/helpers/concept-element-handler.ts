@@ -1,6 +1,14 @@
+export interface IDrawHandler {
+  (
+    pathStartElement: HTMLElement | null,
+    pathEndElement: HTMLElement | null
+  ): void
+}
+
 const CONCEPT_BOX: { [key: string]: HTMLElement } = {}
-const LISTENER_BOX: {
-  [key: string]: [(refs: [any, any]) => void, string, string][]
+
+const DRAW_HANDLER_BOX: {
+  [key: string]: [IDrawHandler, string, string][]
 } = {}
 
 // function to allow Concept to emit itself
@@ -10,57 +18,61 @@ export const emitConceptElement = (
 ): void => {
   if (!element) {
     delete CONCEPT_BOX[slug]
-    LISTENER_BOX[slug].forEach(([listener, ,]) => listener([null, null]))
+    DRAW_HANDLER_BOX[slug].forEach(([handler, ,]) => handler(null, null))
     return
   }
 
   CONCEPT_BOX[slug] = element
 
-  LISTENER_BOX[slug]?.forEach(([listener, from, to]) => {
-    if (LISTENER_BOX[from] && LISTENER_BOX[to]) {
-      listener([LISTENER_BOX[from], LISTENER_BOX[to]])
+  DRAW_HANDLER_BOX[slug]?.forEach(([handler, from, to]) => {
+    if (CONCEPT_BOX[from] && CONCEPT_BOX[to]) {
+      console.log('call from concept')
+
+      handler(CONCEPT_BOX[from], CONCEPT_BOX[to])
     }
   })
 }
 
-// function to allow ConnectionPathCanvas to add itself as a listener
-export const addListenerForConcepts = (
-  callback: (refs: [any, any]) => void,
-  from: string,
-  to: string
-): void => {
-  const fromListeners = LISTENER_BOX[from] ?? []
-  fromListeners.push([callback, from, to])
-  LISTENER_BOX[from] = fromListeners
+export const addDrawHandler = (
+  handler: IDrawHandler,
+  fromConceptSlug: string,
+  toConceptSlug: string
+) => {
+  const fromDrawHandlers = DRAW_HANDLER_BOX[fromConceptSlug] ?? []
+  fromDrawHandlers.push([handler, fromConceptSlug, toConceptSlug])
+  DRAW_HANDLER_BOX[fromConceptSlug] = fromDrawHandlers
 
-  const toListeners = LISTENER_BOX[to] ?? []
-  toListeners.push([callback, from, to])
-  LISTENER_BOX[to] = toListeners
+  const toDrawHandlers = DRAW_HANDLER_BOX[toConceptSlug] ?? []
+  toDrawHandlers.push([handler, fromConceptSlug, toConceptSlug])
+  DRAW_HANDLER_BOX[toConceptSlug] = toDrawHandlers
 
-  if (CONCEPT_BOX[from] && CONCEPT_BOX[to]) {
-    callback([CONCEPT_BOX[from], CONCEPT_BOX[to]])
+  if (CONCEPT_BOX[fromConceptSlug] && CONCEPT_BOX[toConceptSlug]) {
+    console.log('call when added')
+    handler(CONCEPT_BOX[fromConceptSlug], CONCEPT_BOX[toConceptSlug])
   }
 }
 
-// function to allow ConnectionPathCanvas to remove itself as a listener
-export const removeListenerForConcepts = (
-  callback: (from: any, to: any) => void,
-  from: string,
-  to: string
-): void => {
-  const fromListeners = LISTENER_BOX[from] ?? []
-  const fromListenerIndex = fromListeners.findIndex(
-    ([fromCallback, ,]) => fromCallback === callback
+export const removeDrawHandler = (
+  handler: IDrawHandler,
+  fromConceptSlug: string,
+  toConceptSlug: string
+) => {
+  const fromDrawHandlers = DRAW_HANDLER_BOX[fromConceptSlug] ?? []
+  const fromHandlerIndex = fromDrawHandlers.findIndex(
+    ([fromHandler, ,]) => fromHandler === handler
   )
-  if (fromListenerIndex > -1) {
-    LISTENER_BOX[from] = fromListeners.splice(fromListenerIndex, 1)
+  if (fromHandlerIndex > -1) {
+    DRAW_HANDLER_BOX[fromConceptSlug] = fromDrawHandlers.splice(
+      fromHandlerIndex,
+      1
+    )
   }
 
-  const toListeners = LISTENER_BOX[to] ?? []
-  const toListenerIndex = toListeners.findIndex(
-    ([toCallback, ,]) => toCallback === callback
+  const toDrawHandlers = DRAW_HANDLER_BOX[toConceptSlug] ?? []
+  const toHandlerIndex = toDrawHandlers.findIndex(
+    ([toHandler, ,]) => toHandler === handler
   )
-  if (toListenerIndex > -1) {
-    LISTENER_BOX[to] = toListeners.splice(toListenerIndex, 1)
+  if (toHandlerIndex > -1) {
+    DRAW_HANDLER_BOX[toConceptSlug] = toDrawHandlers.splice(toHandlerIndex, 1)
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { useWebpageSize } from './hooks/useWebpageSize'
 
@@ -7,11 +7,10 @@ import { ConceptConnection } from './concept-connection-types'
 import { defaultDrawPathOptions, drawPath } from './helpers/draw-helpers'
 import { determinePath } from './helpers/path-helpers'
 import {
-  addListenerForConcepts,
-  removeListenerForConcepts,
+  IDrawHandler,
+  addDrawHandler,
+  removeDrawHandler,
 } from './helpers/concept-element-handler'
-
-import { wrapBenchmark } from './helpers/simple-benchmark'
 
 /**
  * ConceptConnections
@@ -49,62 +48,42 @@ const ConnectionPathCanvas = ({
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasRef = useRef(null)
 
-  const [[fromRef, toRef], setRefs] = useReducer(
-    (_: any, newRefs: [any, any]) => newRefs,
-    [null, null]
-  )
-
   useEffect(() => {
+    const drawSelf: IDrawHandler = (pathStartElement, pathEndElement) => {
+      const canvas = canvasRef.current as HTMLCanvasElement | null
+      if (!canvas) {
+        return
+      }
+      console.log({ canvas })
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        return
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      if (pathStartElement === null || pathEndElement === null) {
+        return
+      }
+
+      const path = determinePath(pathStartElement, pathEndElement)
+
+      const drawOptions = defaultDrawPathOptions()
+      drawOptions.scale = devicePixelRatio
+
+      requestAnimationFrame(() => drawPath(path, ctx, drawOptions))
+    }
+
     const { from, to } = connection
-    addListenerForConcepts(setRefs, from, to)
+    console.log('adding')
+
+    addDrawHandler(drawSelf, from, to)
     return () => {
-      removeListenerForConcepts(setRefs, from, to)
+      console.log('removing')
+      removeDrawHandler(drawSelf, from, to)
     }
-  }, [connection, setRefs])
-
-  useEffect(() => {
-    const pathStartElement = fromRef
-    const pathEndElement = toRef
-
-    if (!pathStartElement || !pathEndElement) {
-      return
-    }
-
-    const canvas = canvasRef.current as HTMLCanvasElement | null
-    const ctx = canvas?.getContext('2d')
-
-    if (!canvas || !ctx) return
-
-    const width =
-      webpageWidth -
-      Number(canvas.style.borderLeftWidth) -
-      Number(canvas.style.borderRightWidth) -
-      2 // to account for vertical scroll bar
-
-    const height =
-      webpageHeight -
-      Number(canvas.style.borderTopWidth) -
-      Number(canvas.style.borderBottomWidth)
-
-    canvas.width = width * devicePixelRatio
-    canvas.height = height * devicePixelRatio
-
-    canvas.style.width = `${width}px`
-    canvas.style.height = `${height}px`
-    const path = wrapBenchmark(
-      determinePath,
-      `pathing ${connectionToKey(connection)}`
-    )(pathStartElement, pathEndElement)
-
-    const drawOptions = defaultDrawPathOptions()
-    drawOptions.scale = devicePixelRatio
-
-    wrapBenchmark(drawPath, `drawing ${connectionToKey(connection)}`)(
-      path,
-      ctx,
-      drawOptions
-    )
-  }, [fromRef, toRef, webpageHeight, webpageWidth])
+  }, [connection, canvasRef])
 
   const existsActivePaths = activeConcepts.size > 0
   const isInactive =
@@ -115,13 +94,9 @@ const ConnectionPathCanvas = ({
   if (isInactive) {
     classNames.push('inactive')
   }
-  if (!fromRef || !toRef) {
-    classNames.push('hidden')
-  }
 
-  if (!fromRef || !toRef) {
-    return null
-  }
+  const width = webpageWidth - 2 // to account for vertical scroll bar
+  const height = webpageHeight
 
   return (
     <canvas
@@ -129,6 +104,12 @@ const ConnectionPathCanvas = ({
       className={classNames.join(' ')}
       data-from={connection.from}
       data-to={connection.to}
+      width={width * devicePixelRatio}
+      height={height * devicePixelRatio}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+      }}
     />
   )
 }
