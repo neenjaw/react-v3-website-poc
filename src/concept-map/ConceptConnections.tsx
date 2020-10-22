@@ -11,6 +11,8 @@ import {
   removeListenerForConcepts,
 } from './helpers/concept-element-handler'
 
+import { wrapBenchmark } from './helpers/simple-benchmark'
+
 /**
  * ConceptConnections
  */
@@ -89,12 +91,19 @@ const ConnectionPathCanvas = ({
 
     canvas.style.width = `${width}px`
     canvas.style.height = `${height}px`
-    const path = determinePath(pathStartElement, pathEndElement)
+    const path = wrapBenchmark(
+      determinePath,
+      `pathing ${connectionToKey(connection)}`
+    )(pathStartElement, pathEndElement)
 
     const drawOptions = defaultDrawPathOptions()
     drawOptions.scale = devicePixelRatio
 
-    drawPath(path, ctx, drawOptions)
+    wrapBenchmark(drawPath, `drawing ${connectionToKey(connection)}`)(
+      path,
+      ctx,
+      drawOptions
+    )
   }, [fromRef, toRef, webpageHeight, webpageWidth])
 
   const existsActivePaths = activeConcepts.size > 0
