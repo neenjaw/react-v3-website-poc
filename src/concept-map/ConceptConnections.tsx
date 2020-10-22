@@ -1,17 +1,17 @@
 import React, { useEffect, useRef } from 'react'
 
-import { useWebpageSize } from './hooks/useWebpageSize'
-
 import { ConceptConnection } from './concept-connection-types'
 
 import { defaultDrawPathOptions, drawPath } from './helpers/draw-helpers'
-import { determinePath } from './helpers/path-helpers'
+import {
+  determinePath,
+  normalizePathToCanvasSize,
+} from './helpers/path-helpers'
 import {
   IDrawHandler,
   addDrawHandler,
   removeDrawHandler,
 } from './helpers/concept-element-handler'
-import { isConditionalExpression } from 'typescript'
 
 /**
  * ConceptConnections
@@ -46,7 +46,6 @@ const ConnectionPathCanvas = ({
   activeConcepts: Set<string>
   connection: ConceptConnection
 }) => {
-  const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -62,20 +61,49 @@ const ConnectionPathCanvas = ({
         return
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
       if (pathStartElement === null || pathEndElement === null) {
         return
       }
 
       const path = determinePath(pathStartElement, pathEndElement)
 
+      // Use :root defined CSS variable values to style the path
+      const rootStyle = getComputedStyle(document.documentElement)
+      const radius = Number(
+        rootStyle.getPropertyValue('--c-concept-map-circle-radius')
+      )
+      const lineWidth = Number(
+        rootStyle.getPropertyValue('--c-concept-map-line-width')
+      )
+
+      // calculate minimum dimensions for canvas
+      const width =
+        Math.abs(path.end.x - path.start.x) + 2 * radius + 2 * lineWidth
+      const height =
+        Math.abs(path.end.y - path.start.y) + 2 * radius + 2 * lineWidth
+
+      // set dimensions
+      canvas.width = width * devicePixelRatio
+      canvas.height = height * devicePixelRatio
+
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+
+      // calculate amount to translate canvas to be in position
+      const leftToRight = path.start.x <= path.end.x
+      const translateX =
+        (leftToRight ? path.start.x : path.end.x) - radius - lineWidth
+      const translateY = path.start.y - radius - lineWidth
+
+      canvas.style.transform = `translate(${translateX}, ${translateY})`
+
+      // draw the path to the canvas
       const drawOptions = defaultDrawPathOptions()
       drawOptions.scale = devicePixelRatio
 
+      const normalizedPath = normalizePathToCanvasSize(path, width, height)
       requestAnimationFrame(() => {
-        drawPath(path, ctx, drawOptions)
-        canvas.classList.remove('hidden')
+        drawPath(normalizedPath, ctx, drawOptions)
       })
     }
 
@@ -94,13 +122,10 @@ const ConnectionPathCanvas = ({
     existsActivePaths &&
     !(activeConcepts.has(connection.from) && activeConcepts.has(connection.to))
 
-  const classNames = ['canvas', 'hidden']
+  const classNames = ['canvas']
   if (isInactive) {
     classNames.push('inactive')
   }
-
-  const width = webpageWidth - 2 // to account for vertical scroll bar
-  const height = webpageHeight
 
   return (
     <canvas
@@ -108,12 +133,6 @@ const ConnectionPathCanvas = ({
       className={classNames.join(' ')}
       data-from={connection.from}
       data-to={connection.to}
-      width={width * devicePixelRatio}
-      height={height * devicePixelRatio}
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-      }}
     />
   )
 }

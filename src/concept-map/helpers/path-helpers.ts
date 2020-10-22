@@ -1,4 +1,5 @@
 import {
+  ConceptPath,
   ConceptPathCoordinate,
   ConceptPathState,
 } from '../concept-connection-types'
@@ -15,6 +16,35 @@ export function determinePath(
     start: getPathStartFromElement(pathStartElement),
     end: getPathEndFromElement(pathEndElement),
     state: getPathState(conceptStatus),
+  }
+}
+
+export function normalizePathToCanvasSize(
+  path: ConceptPath,
+  width: number,
+  height: number
+): ConceptPath {
+  // Use :root defined CSS variable values to style the path
+  const rootStyle = getComputedStyle(document.documentElement)
+  const radius = Number(
+    rootStyle.getPropertyValue('--c-concept-map-circle-radius')
+  )
+  const lineWidth = Number(
+    rootStyle.getPropertyValue('--c-concept-map-line-width')
+  )
+
+  const leftToRight = path.start.x <= path.end.x
+
+  return {
+    start: {
+      x: leftToRight ? radius + lineWidth : width - radius - lineWidth,
+      y: radius + lineWidth,
+    },
+    end: {
+      x: leftToRight ? width - radius - lineWidth : radius + lineWidth,
+      y: height - radius - lineWidth,
+    },
+    state: path.state,
   }
 }
 
