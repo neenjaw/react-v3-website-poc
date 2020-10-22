@@ -114,8 +114,6 @@ const ConnectionPathCanvas = ({
     return null
   }
 
-  console.log(connectionToKey(connection))
-
   return (
     <canvas
       ref={canvasRef}
