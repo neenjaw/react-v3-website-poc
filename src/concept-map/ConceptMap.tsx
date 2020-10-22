@@ -122,8 +122,6 @@ const findAllActiveSlugs = function (
   descendantsBySlug: AdjacentIndex,
   activeSlug: string | null
 ): Set<string> {
-  console.log(['find active start', Date.now()]) // LOG
-
   if (activeSlug === null) {
     return new Set()
   }
@@ -143,7 +141,6 @@ const findAllActiveSlugs = function (
     ancestorSlugs.push(...unprocessedParentSlugs)
   }
 
-  console.log(['find active end', Date.now()]) // LOG
   return new Set([
     ...ancestorSlugs,
     ...Array.from(descendantsBySlug.get(activeSlug) ?? []),

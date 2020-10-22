@@ -19602,6 +19602,10 @@ video {
       opacity: var(--c-concept-map-hover-opacity);
     }
 
+.c-concepts-map .canvas.hidden {
+      opacity: 0;
+    }
+
 @media (min-width: 640px) {
   .sm\:s-container {
     width: 100%;

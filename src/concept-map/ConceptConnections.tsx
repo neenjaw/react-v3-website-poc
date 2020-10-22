@@ -1,16 +1,18 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useWebpageSize } from './hooks/useWebpageSize'
-import { useMountedConcepts } from './hooks/useMountedConcepts'
 
 import { ConceptConnection } from './concept-connection-types'
 
 import { defaultDrawPathOptions, drawPath } from './helpers/draw-helpers'
 import { determinePath } from './helpers/path-helpers'
+import {
+  addListenerForConcept,
+  removeListenerForConcept,
+} from './helpers/concept-element-handler'
 
 /**
  * ConceptConnections
- * This react component manages an HTML5 canvas to draw connections between concepts
  */
 export const ConceptConnections = ({
   connections,
@@ -42,16 +44,35 @@ const ConnectionPathCanvas = ({
   activeConcepts: Set<string>
   connection: ConceptConnection
 }) => {
-  const mountedConcepts = useMountedConcepts()
   const { width: webpageWidth, height: webpageHeight } = useWebpageSize()
   const canvasRef = useRef(null)
 
-  const key = connectionToKey(connection)
-  const pathStartElement = mountedConcepts[connection.from]
-  const pathEndElement = mountedConcepts[connection.to]
+  const [fromRef, setFromRef] = useState()
+  const [toRef, setToRef] = useState()
+
+  const fromListener = useCallback((nextFromRef) => {
+    setFromRef(nextFromRef)
+  }, [])
+
+  const toListener = useCallback((nextToRef) => {
+    setToRef(nextToRef)
+  }, [])
 
   useEffect(() => {
-    console.log(['effect start', Date.now(), key]) // LOG
+    const { from, to } = connection
+
+    addListenerForConcept(from, fromListener)
+    addListenerForConcept(to, toListener)
+    return () => {
+      removeListenerForConcept(from, fromListener)
+      removeListenerForConcept(to, toListener)
+    }
+  }, [connection, fromListener, toListener])
+
+  useEffect(() => {
+    const pathStartElement = fromRef
+    const pathEndElement = toRef
+
     if (!pathStartElement || !pathEndElement) {
       return
     }
@@ -83,16 +104,7 @@ const ConnectionPathCanvas = ({
     drawOptions.scale = devicePixelRatio
 
     drawPath(path, ctx, drawOptions)
-  }, [
-    key,
-    connection.from,
-    connection.to,
-    mountedConcepts,
-    webpageHeight,
-    webpageWidth,
-    pathStartElement,
-    pathEndElement,
-  ])
+  }, [fromRef, toRef, webpageHeight, webpageWidth])
 
   const existsActivePaths = activeConcepts.size > 0
   const isInactive =
@@ -102,6 +114,9 @@ const ConnectionPathCanvas = ({
   const classNames = ['canvas']
   if (isInactive) {
     classNames.push('inactive')
+  }
+  if (!fromRef || !toRef) {
+    classNames.push('hidden')
   }
 
   return (

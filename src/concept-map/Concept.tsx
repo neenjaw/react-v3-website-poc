@@ -2,10 +2,8 @@ import React, { useEffect, useRef } from 'react'
 import { CompleteIcon } from './CompleteIcon'
 
 import { IConcept, ConceptStatus } from './concept-types'
-import {
-  registerMountedConcept,
-  unregisterMountedConcept,
-} from './hooks/useMountedConcepts'
+
+import { emitConceptElement } from './helpers/concept-element-handler'
 
 export const Concept = ({
   slug,
@@ -22,9 +20,10 @@ export const Concept = ({
   const conceptRef = useRef(null)
 
   useEffect(() => {
-    registerMountedConcept(slug, conceptRef.current)
+    const current = conceptRef.current
+    emitConceptElement(slug, current)
     return () => {
-      unregisterMountedConcept(slug)
+      emitConceptElement(slug)
     }
   }, [slug, conceptRef])
 
