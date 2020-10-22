@@ -11,6 +11,7 @@ import {
   addDrawHandler,
   removeDrawHandler,
 } from './helpers/concept-element-handler'
+import { isConditionalExpression } from 'typescript'
 
 /**
  * ConceptConnections
@@ -72,7 +73,10 @@ const ConnectionPathCanvas = ({
       const drawOptions = defaultDrawPathOptions()
       drawOptions.scale = devicePixelRatio
 
-      requestAnimationFrame(() => drawPath(path, ctx, drawOptions))
+      requestAnimationFrame(() => {
+        drawPath(path, ctx, drawOptions)
+        canvas.classList.remove('hidden')
+      })
     }
 
     const { from, to } = connection
@@ -90,7 +94,7 @@ const ConnectionPathCanvas = ({
     existsActivePaths &&
     !(activeConcepts.has(connection.from) && activeConcepts.has(connection.to))
 
-  const classNames = ['canvas']
+  const classNames = ['canvas', 'hidden']
   if (isInactive) {
     classNames.push('inactive')
   }
