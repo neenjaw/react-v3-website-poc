@@ -12,6 +12,7 @@ import {
   addDrawHandler,
   removeDrawHandler,
 } from './helpers/concept-element-handler'
+import { useWebpageSize } from './hooks/useWebpageSize'
 
 /**
  * ConceptConnections
@@ -46,6 +47,7 @@ const ConnectionPathCanvas = ({
   activeConcepts: Set<string>
   connection: ConceptConnection
 }) => {
+  const webpageSize = useWebpageSize()
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -95,7 +97,7 @@ const ConnectionPathCanvas = ({
         (leftToRight ? path.start.x : path.end.x) - radius - lineWidth
       const translateY = path.start.y - radius - lineWidth
 
-      canvas.style.transform = `translate(${translateX}, ${translateY})`
+      canvas.style.transform = `translate(${translateX}px, ${translateY}px)`
 
       // draw the path to the canvas
       const drawOptions = defaultDrawPathOptions()
@@ -115,7 +117,7 @@ const ConnectionPathCanvas = ({
       console.log('removing')
       removeDrawHandler(drawSelf, from, to)
     }
-  }, [connection, canvasRef])
+  }, [connection, canvasRef, webpageSize])
 
   const existsActivePaths = activeConcepts.size > 0
   const isInactive =
