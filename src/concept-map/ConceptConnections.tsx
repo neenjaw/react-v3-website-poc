@@ -61,11 +61,9 @@ const ConnectionPathCanvas = ({
   useEffect(() => {
     const { from, to } = connection
 
-    addListenerForConcept(from, fromListener)
-    addListenerForConcept(to, toListener)
+    addListenerForConcept(from, fromListener, to, toListener)
     return () => {
-      removeListenerForConcept(from, fromListener)
-      removeListenerForConcept(to, toListener)
+      removeListenerForConcept(from, fromListener, to, toListener)
     }
   }, [connection, fromListener, toListener])
 
