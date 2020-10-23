@@ -7,6 +7,8 @@ import { IConceptMap, ConceptLayer } from './concept-map-types'
 import { ConceptConnection } from './concept-connection-types'
 import { ConceptStatus, IConcept, isIConcept } from './concept-types'
 
+import { useFontLoaded } from './hooks/useFontLoaded'
+
 type AdjacentIndex = Map<string, Set<string>>
 type RelationReducer = (connection: ConceptConnection) => [string, string]
 
@@ -24,7 +26,12 @@ export const ConceptMap = ({
   connections,
   status,
 }: IConceptMap) => {
+  const loadedFontCorrectly = useFontLoaded('Open Sans')
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
+
+  if (loadedFontCorrectly === null) {
+    return null
+  }
 
   const conceptsBySlug = indexConceptsBySlug(concepts)
   const descendantsBySlug = indexDescendantsBySlug(connections)
