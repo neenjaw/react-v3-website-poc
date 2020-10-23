@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react'
 import { useWebpageSize } from './hooks/useWebpageSize'
 
-import { ConceptConnection } from './concept-connection-types'
+import { ConceptConnection } from './concept-map-types'
 
 import {
   addElementDispatcher,
@@ -13,7 +13,13 @@ import {
   determinePath,
   normalizePathToCanvasSize,
 } from './helpers/path-helpers'
-import { getCircleRadius, getLineWidth } from './helpers/style-helpers'
+import {
+  getCircleRadius,
+  getConceptMapStylePropertyValue,
+  getLineColor,
+  getLineDasharray,
+  getLineWidth,
+} from './helpers/style-helpers'
 import { computeBezier } from './helpers/svg-draw-helpers'
 
 const elementReducer: ElementReducer = (_, nextElements) => nextElements
@@ -52,7 +58,7 @@ export const ConnectionPathSVG = ({
   const height =
     Math.abs(path.end.y - path.start.y) + 2 * radius + 2 * lineWidth
 
-  // calculate amount to translate canvas to be in position
+  // calculate amount to translate svg element to be in position
   const leftToRight = path.start.x <= path.end.x
   const translateX =
     (leftToRight ? path.start.x : path.end.x) - radius - lineWidth
@@ -60,6 +66,7 @@ export const ConnectionPathSVG = ({
 
   const normalizedPath = normalizePathToCanvasSize(path, width, height)
   const bezierSVG = computeBezier(normalizedPath)
+
   /**
    * Compute ClassNames
    */
@@ -77,12 +84,8 @@ export const ConnectionPathSVG = ({
     <svg
       viewBox={`0 0 ${width} ${height}`}
       style={{
-        top: 0,
-        left: 0,
         width: `${width}px`,
         height: `${height}px`,
-        position: 'absolute',
-        zIndex: -1,
         transform: `translate(${translateX}px, ${translateY}px)`,
       }}
       className={classNames.join(' ')}
@@ -90,13 +93,34 @@ export const ConnectionPathSVG = ({
       data-to={connection.to}
     >
       <g>
-        {/* START CIRCLE HERE */}
-        {/* END CIRCLE HERE */}
         <path
           d={bezierSVG}
           style={{
             fill: 'none',
-            stroke: '#000',
+            stroke: getLineColor(path.status),
+            strokeDasharray: getLineDasharray(
+              path.status === 'complete' ? 'solid' : 'dashed'
+            ),
+            strokeWidth: `${lineWidth}px`,
+          }}
+        />
+        <circle
+          cx={normalizedPath.start.x}
+          cy={normalizedPath.start.y}
+          r={radius}
+          style={{
+            fill: getConceptMapStylePropertyValue('card-background'),
+            stroke: getLineColor(path.status),
+            strokeWidth: `${lineWidth}px`,
+          }}
+        />
+        <circle
+          cx={normalizedPath.end.x}
+          cy={normalizedPath.end.y}
+          r={radius}
+          style={{
+            fill: getConceptMapStylePropertyValue('card-background'),
+            stroke: getLineColor(path.status),
             strokeWidth: `${lineWidth}px`,
           }}
         />

@@ -7,15 +7,15 @@ module.exports = {
   theme: {
     borderRadius: {
       none: '0',
-      '8': '8px',
-      '100': '100px',
+      8: '8px',
+      100: '100px',
     },
     borderWidth: {
       none: '0',
-      '1': '1px',
+      1: '1px',
     },
     boxShadow: {
-      '1': '0px 4px 24px rgba(79, 114, 205, 0.15)',
+      1: '0px 4px 24px rgba(79, 114, 205, 0.15)',
     },
     colors: {
       transparent: 'transparent',
@@ -33,19 +33,21 @@ module.exports = {
       mono: ['Source Code Pro', 'monospace'],
     },
     fontSize: {
-      '14': '14px',
-      '16': '16px',
-      '20': '20px',
+      14: '14px',
+      16: '16px',
+      20: '20px',
     },
     spacing: {
-      '8': '8px',
-      '12': '12px',
-      '16': '16px',
-      '20': '20px',
-      '24': '24px',
+      8: '8px',
+      12: '12px',
+      16: '16px',
+      20: '20px',
+      24: '24px',
     },
     zIndex: {
       '-1': '-1',
+      '-2': '-2',
+      '-3': '-3',
     },
   },
   variants: {},

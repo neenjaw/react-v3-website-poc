@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { ConceptConnection } from './concept-connection-types'
-// import { ConnectionPathCanvas } from './ConnectionPathCanvas'
+import { ConceptConnection } from './concept-map-types'
 import { ConnectionPathSVG } from './ConnectionPathSVG'
 
 /**

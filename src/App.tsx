@@ -8,10 +8,10 @@ import { ConceptMap } from './concept-map/ConceptMap'
 function App() {
   return (
     <ConceptMap
-      concepts={data.graph.concepts}
-      levels={data.graph.levels}
-      connections={data.graph.connections}
-      status={data.graph.status}
+      concepts={data.concepts}
+      levels={data.levels}
+      connections={data.connections}
+      status={data.status}
     />
   )
 }

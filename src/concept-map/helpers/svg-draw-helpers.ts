@@ -1,4 +1,4 @@
-import { ConceptPath } from '../concept-connection-types'
+import { ConceptPath } from '../concept-map-types'
 
 export const computeBezier = (path: ConceptPath): string => {
   const { start, end } = path
