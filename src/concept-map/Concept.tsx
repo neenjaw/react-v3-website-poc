@@ -3,7 +3,7 @@ import { CompleteIcon } from './CompleteIcon'
 
 import { IConcept, ConceptStatus } from './concept-types'
 
-import { emitConceptElement } from './helpers/concept-element-handler'
+import { emitConceptElement } from './helpers/concept-element-svg-handler'
 import {
   addVisibilityListener,
   removeVisibilityListener,
