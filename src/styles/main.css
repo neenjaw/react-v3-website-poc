@@ -19567,6 +19567,10 @@ video {
           color: rgba(52, 55, 65, var(--text-opacity));
         }
 
+.c-concepts-map .track .layer .card.hidden {
+          visibility: hidden;
+        }
+
 .c-concepts-map .track .layer .card .display {
           display: flex;
           align-items: center;

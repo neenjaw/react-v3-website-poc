@@ -56,7 +56,6 @@ const ConnectionPathCanvas = ({
       if (!canvas) {
         return
       }
-      console.log({ canvas })
 
       const ctx = canvas.getContext('2d')
       if (!ctx) {
@@ -110,11 +109,8 @@ const ConnectionPathCanvas = ({
     }
 
     const { from, to } = connection
-    console.log('adding')
-
     addDrawHandler(drawSelf, from, to)
     return () => {
-      console.log('removing')
       removeDrawHandler(drawSelf, from, to)
     }
   }, [connection, canvasRef, webpageSize])

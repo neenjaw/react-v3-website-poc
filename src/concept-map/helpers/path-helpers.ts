@@ -9,7 +9,7 @@ import { ConceptStatus } from '../concept-types'
 export function determinePath(
   pathStartElement: HTMLElement,
   pathEndElement: HTMLElement
-) {
+): ConceptPath {
   const conceptStatus = pathEndElement.dataset.conceptStatus as ConceptStatus
 
   return {
