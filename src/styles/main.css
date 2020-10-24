@@ -16759,6 +16759,18 @@ video {
   z-index: -1;
 }
 
+.s--z-2 {
+  z-index: -2;
+}
+
+.s--z-3 {
+  z-index: -3;
+}
+
+.s--z-4 {
+  z-index: -4;
+}
+
 .s-gap-0 {
   grid-gap: 0;
   grid-gap: 0;
@@ -19601,7 +19613,6 @@ video {
     left: 0;
     transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
     touch-action: none
-    /* border: 1px dashed; */
   }
 
 .c-concepts-map .canvas.inactive {
@@ -19610,6 +19621,46 @@ video {
 
 .c-concepts-map .canvas.hidden {
       opacity: 0;
+    }
+
+.c-concepts-map .canvas.locked {
+      z-index: -4;
+    }
+
+.c-concepts-map .canvas.available {
+      z-index: -3;
+    }
+
+.c-concepts-map .canvas.complete {
+      z-index: -2;
+    }
+
+.c-concepts-map .canvas path {
+      fill: none;
+    }
+
+.c-concepts-map .canvas .locked {
+      stroke: var(--c-concept-map-line-locked);
+      stroke-dasharray: var(--c-concept-map-line-dasharray-dashed);
+    }
+
+.c-concepts-map .canvas .available {
+      stroke: var(--c-concept-map-line-available);
+      stroke-dasharray: var(--c-concept-map-line-dasharray-dashed);
+    }
+
+.c-concepts-map .canvas .complete {
+      stroke: var(--c-concept-map-line-complete);
+      stroke-dasharray: var(--c-concept-map-line-dasharray-solid);
+    }
+
+.c-concepts-map .canvas .end-cap {
+      fill: var(--c-concept-map-card-background);
+      stroke-dasharray: var(--c-concept-map-line-dasharray-solid);
+    }
+
+.c-concepts-map .canvas .line-width-2 {
+      stroke-width: 2px;
     }
 
 @media (min-width: 640px) {
@@ -35796,6 +35847,18 @@ video {
 
   .sm\:s--z-1 {
     z-index: -1;
+  }
+
+  .sm\:s--z-2 {
+    z-index: -2;
+  }
+
+  .sm\:s--z-3 {
+    z-index: -3;
+  }
+
+  .sm\:s--z-4 {
+    z-index: -4;
   }
 
   .sm\:s-gap-0 {
@@ -54712,6 +54775,18 @@ video {
     z-index: -1;
   }
 
+  .md\:s--z-2 {
+    z-index: -2;
+  }
+
+  .md\:s--z-3 {
+    z-index: -3;
+  }
+
+  .md\:s--z-4 {
+    z-index: -4;
+  }
+
   .md\:s-gap-0 {
     grid-gap: 0;
     grid-gap: 0;
@@ -73626,6 +73701,18 @@ video {
     z-index: -1;
   }
 
+  .lg\:s--z-2 {
+    z-index: -2;
+  }
+
+  .lg\:s--z-3 {
+    z-index: -3;
+  }
+
+  .lg\:s--z-4 {
+    z-index: -4;
+  }
+
   .lg\:s-gap-0 {
     grid-gap: 0;
     grid-gap: 0;
@@ -92538,6 +92625,18 @@ video {
 
   .xl\:s--z-1 {
     z-index: -1;
+  }
+
+  .xl\:s--z-2 {
+    z-index: -2;
+  }
+
+  .xl\:s--z-3 {
+    z-index: -3;
+  }
+
+  .xl\:s--z-4 {
+    z-index: -4;
   }
 
   .xl\:s-gap-0 {
