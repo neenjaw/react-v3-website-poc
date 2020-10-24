@@ -19545,6 +19545,10 @@ video {
   --c-concept-map-hover-opacity: 0.3;
 }
 
+.c-concepts-map {
+  min-width: 300px
+}
+
 .c-concepts-map .track {
     pointer-events: none;
     display: block
