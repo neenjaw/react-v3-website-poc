@@ -64,6 +64,8 @@ export const Concept = ({
   )
 }
 
+export const PureConcept = React.memo(Concept)
+
 export function conceptExerciseSlugToId(slug: string): string {
   return `concept-exercise-${slug}`
 }
