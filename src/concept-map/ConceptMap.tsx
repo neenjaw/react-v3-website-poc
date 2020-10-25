@@ -59,7 +59,7 @@ export const ConceptMap = ({
               .filter(isIConcept)
               .map((concept) => {
                 const slug = concept.slug
-                const isInactive = activeSlug !== null && !activeSlugs.has(slug)
+                const isActive = activeSlug === null || activeSlugs.has(slug)
 
                 return (
                   <PureConcept
@@ -70,7 +70,7 @@ export const ConceptMap = ({
                     handleEnter={() => setActiveSlug(slug)}
                     handleLeave={unsetActiveSlug}
                     status={status[slug] ?? 'locked'}
-                    isInactive={isInactive}
+                    isActive={isActive}
                   />
                 )
               })}

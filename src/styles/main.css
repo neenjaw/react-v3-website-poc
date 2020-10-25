@@ -19569,14 +19569,15 @@ video {
         margin-left: 12px;
         margin-right: 12px;
         pointer-events: auto;
+        opacity: var(--c-concept-map-hover-opacity);
         background-color: var(--c-concept-map-card-background);
         color: var(--c-concept-map-text-locked);
         box-shadow: 0px 0px 25px -5px rgba(0, 0, 0, 0.25);
         transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1)
       }
 
-.c-concepts-map .track .layer .card.card-inactive {
-          opacity: var(--c-concept-map-hover-opacity);
+.c-concepts-map .track .layer .card.card-active {
+          opacity: 1;
         }
 
 .c-concepts-map .track .layer .card.card-completed {
@@ -19616,11 +19617,12 @@ video {
     top: 0;
     left: 0;
     transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
-    touch-action: none
+    touch-action: none;
+    opacity: var(--c-concept-map-hover-opacity)
   }
 
-.c-concepts-map .canvas.inactive {
-      opacity: var(--c-concept-map-hover-opacity);
+.c-concepts-map .canvas.active {
+      opacity: 1;
     }
 
 .c-concepts-map .canvas.hidden {

@@ -68,13 +68,13 @@ export const ConnectionPathSVG = ({
 
   // Compute ClassNames
   const existsActivePaths = activeConcepts.size > 0
-  const isInactive =
-    existsActivePaths &&
-    !(activeConcepts.has(connection.from) && activeConcepts.has(connection.to))
+  const isActive =
+    !existsActivePaths ||
+    (activeConcepts.has(connection.from) && activeConcepts.has(connection.to))
 
   const classNames = ['canvas', normalizedPath.status]
-  if (isInactive) {
-    classNames.push('inactive')
+  if (isActive) {
+    classNames.push('active')
   }
 
   return (
