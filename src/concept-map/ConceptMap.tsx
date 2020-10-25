@@ -9,6 +9,7 @@ import {
   isIConcept,
   ConceptConnection,
 } from './concept-map-types'
+import { useFontLoaded } from './hooks/useFontLoaded'
 
 type AdjacentIndex = Map<string, Set<string>>
 type RelationReducer = (connection: ConceptConnection) => [string, string]
@@ -26,7 +27,9 @@ export const ConceptMap = ({
   levels,
   connections,
   status,
-}: IConceptMap) => {
+}: IConceptMap): JSX.Element => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fontLoaded = useFontLoaded('Poppins')
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
   const conceptsBySlug = indexConceptsBySlug(concepts)
